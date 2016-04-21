@@ -20,6 +20,7 @@ from bson.codec_options import CodecOptions
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'svg'])
 FILE_LOCATION = '/home/ardi/PycharmProjects/KomputasiAwanGG/flask_gridfs_server/FILE/'
+USER_LOGIN = 'ARDI NUSAWAN'
 
 DB = MongoClient().gridfs_server_test  # DB Name
 FS = GridFS(DB)
@@ -39,7 +40,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             oid = FS.put(file, content_type=file.content_type,
-                         filename=filename)
+                         filename=filename, user=USER_LOGIN, location = FILE_LOCATION)
             #
             outputdata = FS.get(oid).read()
             file_name = FS.get(oid).filename
@@ -121,19 +122,7 @@ def update(oid):
 @app.route('/dict/<oid>')
 def dict(oid):
     file_object = FS.get(ObjectId(oid))
-    # file_object.__setattr__("test","testtt")
 
-    # file_object({'filename':'Selection_026.png'}, {'$set':{'hak_cipta':"bebasss", 'keterangan':"foto_fahrulsss"}})
-    # print file_object.test
-    # gout = FS.get_last_version(file_object.filename)
-    # outfilename = '/home/ardi/PycharmProjects/KomputasiAwanGG/flask_gridfs_server/FILE/'
-
-    # fout = open(file_object.filename, 'wb')
-    # fout.writelines(gout.read(),'/home/ardi/PycharmProjects/KomputasiAwanGG/flask_gridfs_server/', )
-    # fout.write(gout.read())
-    # fout.close()
-    # gout.close()
-    # print file_object.keterangan #5717aa43c90d7d37e97cc9b2
     return '''
     aa
     '''
