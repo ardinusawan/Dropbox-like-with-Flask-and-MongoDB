@@ -1,4 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
         <h2>You are in homepage!</h2>
+        {% if current_user.is_authenticated() %}
+            <label>{% print current_user.get_id() %}</label>
+        {% endif %}
 {% endblock %}
