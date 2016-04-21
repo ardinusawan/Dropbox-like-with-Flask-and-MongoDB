@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 WTF_CSRF_ENABLED = True
-SECRET_KEY = 'Put your secret key here'
+SECRET_KEY = '12345678'
 DB_NAME = 'blog'
 
 DATABASE = MongoClient()[DB_NAME]
