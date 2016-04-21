@@ -1,20 +1,15 @@
 How to use flask-login
 
-Moreover, you need mongoDB to be installed and running.
+1. Moreover, you need mongoDB to be installed and running.
+2. I included a script (populateDB.py) that you can use to setup the DB with the user and password you want to test.
+3. Last, but not least: generally config.py file should not be shared because contains sensitive information, but in this case it's needed to make all work and it's not containing so much ;)
+   Ex :
+   At populateDB.py, collection = MongoClient()["blog"]["users"]
+   And at config.py, DB_NAME = 'blog'
 
-I included a script (populateDB.py) that you can use to setup the DB with the user and password you want to test.
-
-
-Last, but not least: generally config.py file should not be shared because contains sensitive information, but in this case it's needed to make all work and it's not containing so much ;)
-
-Ex :
-At populateDB.py, collection = MongoClient()["blog"]["users"]
-
-And at config.py, DB_NAME = 'blog'
-
-First, run 'populateDB.py' to create your user
-
-Second, run 'run-dev.py' to run login flask
+4. Run
+   a. First, run 'populateDB.py' to create your user
+   b. Second, run 'run-dev.py' to run login flask
 
 If you have any improvement or suggestion, please let me know!
 
