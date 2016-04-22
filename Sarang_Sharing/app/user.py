@@ -18,7 +18,8 @@ class User():
 
     def get_id(self):
         return self.username
-
+    def username(user):
+        return user
     @staticmethod
     def validate_login(password_hash, password):
         return check_password_hash(password_hash, password)
