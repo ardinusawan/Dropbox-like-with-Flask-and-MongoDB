@@ -130,12 +130,25 @@ def upload_file():
 
 @app.route('/files')
 def list_gridfs_files():
-    files = [FS.get_last_version(file) for file in FS.list()]
+    data_user = []
+    # print FS.exists(user="ardinusawan")
+    for grid_out in FS.find({"user": USER_LOGIN}):
+        data = grid_out
+        print data.filename
+        data_user.append(data.filename)
+    print data_user;
+    print FS.list()
+    # filess = [FS.get_last_version(file) for file in FS.find({"user": "ardinusawan"})]
+    # print filess
+    files = [FS.get_last_version(file) for file in data_user]
+
+    # files = [FS.get_last_version(file) for file in FS.list() if str(file.user) == USER_LOGIN]
+
+
     file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
                           (url_for('serve_gridfs_file', oid=str(file._id)),
                            file.name) for file in files])
-    # print FS.list()
-    # print "\n"
+    print "\n"
 
     return '''
     <!DOCTYPE html>
