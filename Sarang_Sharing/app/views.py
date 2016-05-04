@@ -4,6 +4,7 @@ from flask import request, redirect, render_template, url_for, flash
 from flask.ext.login import login_user, logout_user, login_required
 from .forms import LoginForm
 from .user import User
+from .object import *
 
 
 
@@ -23,6 +24,7 @@ def home():
     return render_template('home.html')
 
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global USER_LOGIN
@@ -30,7 +32,6 @@ def login():
     if request.method == 'POST' and form.validate_on_submit():
         user = app.config['USERS_COLLECTION'].find_one({"_id": form.username.data})
         if user and User.validate_login(user['password'], form.password.data):
-
             user_obj = User(user['_id'])
             login_user(user_obj)
             a = str(user_obj.username)
@@ -110,61 +111,66 @@ def upload_file():
 
             #
             return redirect(url_for('serve_gridfs_file', oid=str(oid)))
-    return '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-    <title>Upload new file</title>
-    </head>
-    <body>
-    <h1>Upload new file</h1>
-    <form action="" method="post" enctype="multipart/form-data">
-    <p><input type="file" name="file"></p>
-    <p><input type="submit" value="Upload"></p>
-    </form>
-    <a href="%s">All files</a>
-    </body>
-    </html>
-    ''' % url_for('list_gridfs_files')
+    return render_template('main.html')
+
+    # return '''
+    # <!DOCTYPE html>
+    # <html>
+    # <head>
+    # <title>Upload new file</title>
+    # </head>
+    # <body>
+    # <h1>Upload new file</h1>
+    # <form action="" method="post" enctype="multipart/form-data">
+    # <p><input type="file" name="file"></p>
+    # <p><input type="submit" value="Upload"></p>
+    # </form>
+    # <a href="%s">All files</a>
+    # </body>
+    # </html>
+    # ''' % url_for('list_gridfs_files')
 
 
 @app.route('/files')
 def list_gridfs_files():
-    data_user = []
+    data_user_filename = []
+    data_user_obj = []
     # print FS.exists(user="ardinusawan")
     for grid_out in FS.find({"user": USER_LOGIN}):
         data = grid_out
         print data.filename
-        data_user.append(data.filename)
-    print data_user;
+        data_user_filename.append(data.filename)
+        data_user_obj.append(data._id)
+    print data_user_filename;
     print FS.list()
-    # filess = [FS.get_last_version(file) for file in FS.find({"user": "ardinusawan"})]
-    # print filess
-    files = [FS.get_last_version(file) for file in data_user]
+    # files = [FS.get_last_version(file) for file in data_user_filename]
 
-    # files = [FS.get_last_version(file) for file in FS.list() if str(file.user) == USER_LOGIN]
+    #
+    # file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
+    #                       (url_for('serve_gridfs_file', oid=str(file._id)),
+    #                        file.name) for file in files])
+    Object.filename = data_user_filename
+    Object.object_name = data_user_obj
+    # print str(Object.filename)
+    # print str(Object.object_name)
+    # return render_template('files.html', file_object=Object)
+    return render_template('files.html', file_object=data_user_obj, file_username=data_user_filename)
 
-
-    file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
-                          (url_for('serve_gridfs_file', oid=str(file._id)),
-                           file.name) for file in files])
-    print "\n"
-
-    return '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-    <title>Files</title>
-    </head>
-    <body>
-    <h1>Files</h1>
-    <ul>
-    %s
-    </ul>
-    <a href="%s">Upload new file</a>
-    </body>
-    </html>
-    ''' % (file_list, url_for('upload_file'))
+    # return '''
+    # <!DOCTYPE html>
+    # <html>
+    # <head>
+    # <title>Files</title>
+    # </head>
+    # <body>
+    # <h1>Files</h1>
+    # <ul>
+    # %s
+    # </ul>
+    # <a href="%s">Upload new file</a>
+    # </body>
+    # </html>
+    # ''' % (file_list, url_for('upload_file'))
 
 
 @app.route('/files/<oid>')
