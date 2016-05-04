@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+        {% if current_user.is_authenticated() %}
+            <div class="nav navbar-nav navbar-right">
+            <label>{% print current_user.get_id() %}</label></div>
+            <h1>Upload new file</h1>
+            <form action="" method="post" enctype="multipart/form-data">
+            <p><input type="file" name="file"></p>
+            <p><input type="submit" value="Upload"></p>
+            </form>
+
+        {% endif %}
+{% endblock %}
