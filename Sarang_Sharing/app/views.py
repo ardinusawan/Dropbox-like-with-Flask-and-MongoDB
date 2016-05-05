@@ -97,18 +97,16 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
 
-            # print USER_LOGIN
-            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, location = FILE_LOCATION, filename=filename)
-            outputdata = FS.get(oid).read()
-            file_name = FS.get(oid).filename
-            # print file_name
-            file_save = FILE_LOCATION + file_name
-            outfilename = file_save
-            output = open(outfilename,'wb')
-            output.write(outputdata)
-            output.close()
-
-            #
+            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename)
+            # tolong jangan dihapus
+            # outputdata = FS.get(oid).read()
+            # file_name = FS.get(oid).filename
+            # file_save = FILE_LOCATION + file_name
+            # outfilename = file_save
+            # output = open(outfilename,'wb')
+            # output.write(outputdata)
+            # output.close()
+            # tolong jangan dihapus
             return redirect(url_for('serve_gridfs_file', oid=str(oid)))
     return render_template('main.html')
 
