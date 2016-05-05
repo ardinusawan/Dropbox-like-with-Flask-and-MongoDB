@@ -20,6 +20,7 @@ from gridfs.errors import NoFile
 from copy import *
 USER_LOGIN = []
 @app.route('/')
+
 def home():
     return render_template('home.html')
 
@@ -62,8 +63,12 @@ def write():
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    return render_template('settings.html')
-
+    tmp = check_user()
+    if tmp:
+        size = count_usage()
+        return render_template('settings.html',size=size)
+    else:
+        return render_template('settings.html')
 
 ##
 
@@ -85,24 +90,18 @@ def allowed_file(filename):
 
 
 @app.route('/main', methods=['GET', 'POST'])
+@login_required
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            #
-            # if(current_user.is_active() and current_user.is_authentication()):
-            #     current_user.get_id()
-            #     print 'sedang login'
-            # else:
-            #     print 'gagal'
-            #
-            print USER_LOGIN
-            # print 1
+
+            # print USER_LOGIN
             oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, location = FILE_LOCATION, filename=filename)
             outputdata = FS.get(oid).read()
             file_name = FS.get(oid).filename
-            print file_name
+            # print file_name
             file_save = FILE_LOCATION + file_name
             outfilename = file_save
             output = open(outfilename,'wb')
@@ -129,34 +128,45 @@ def upload_file():
     # </body>
     # </html>
     # ''' % url_for('list_gridfs_files')
+def check_user():
+    if not USER_LOGIN:
+        return False;
+    else:
+        return True;
 
 
 @app.route('/files')
+@login_required
 def list_gridfs_files():
-    data_user_filename = []
-    data_user_obj = []
-    banyak_data = 0
-    # print FS.exists(user="ardinusawan")
-    for grid_out in FS.find({"user": USER_LOGIN}):
-        data = grid_out
-        print data.filename
-        data_user_filename.append(str(data.filename))
-        data_user_obj.append(str(data._id))
-        banyak_data +=1
-    print data_user_filename;
-    print FS.list()
-    files = [FS.get_last_version(file) for file in data_user_filename]
-
-
-    file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
-                          (url_for('serve_gridfs_file', oid=str(file._id)),
-                           file.name) for file in files])
-    print '########################################'
-    Object.filename = data_user_filename
-    Object.object_name = data_user_obj
-    print Object.filename
-    print Object.object_name
-    return render_template('files.html', file_object=Object,file_count=banyak_data)
+    tmp = check_user()
+    if tmp:
+        data_user_filename = []
+        data_user_obj = []
+        banyak_data = 0
+        # print FS.exists(user="ardinusawan")
+        for grid_out in FS.find({"user": USER_LOGIN}):
+            data = grid_out
+            print data.filename
+            data_user_filename.append(str(data.filename))
+            data_user_obj.append(str(data._id))
+            banyak_data +=1
+        print data_user_filename;
+        print FS.list()
+        # files = [FS.get_last_version(file) for file in data_user_filename]
+        #
+        #
+        # file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
+        #                       (url_for('serve_gridfs_file', oid=str(file._id)),
+        #                        file.name) for file in files])
+        print '########################################'
+        Object.filename = data_user_filename
+        Object.object_name = data_user_obj
+        print Object.filename
+        print Object.object_name
+        return render_template('files.html', file_object=Object,file_count=banyak_data)
+    else:
+        # myuser = User.get_id()
+        return render_template('files.html')
     # return render_template('files.html', file_object=file_list)
     # return render_template('files.html', file_object=data_user_obj, file_username=data_user_filename)
 
@@ -178,6 +188,7 @@ def list_gridfs_files():
 
 
 @app.route('/files/<oid>')
+@login_required
 def serve_gridfs_file(oid):
     try:
         # Convert the string to an ObjectId instance
@@ -190,6 +201,7 @@ def serve_gridfs_file(oid):
 
 ##
 @app.route('/update/<oid>')
+@login_required
 def update(oid):
     try:
         # Convert the string to an ObjectId instance
@@ -222,3 +234,15 @@ def load_user(username):
     if not u:
         return None
     return User(u['_id'])
+
+def count_usage():
+    size = 0
+    for grid_out in FS.find({"user": USER_LOGIN}):
+            data = grid_out
+            size += data.length
+            print size
+    return size
+            # print data.filename
+            # data_user_filename.append(str(data.filename))
+            # data_user_obj.append(str(data._id))
+            # banyak_data +=1
