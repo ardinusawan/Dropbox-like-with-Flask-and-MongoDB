@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     {% if not size %}
-    Silahkan logout dan login kembali
+    data anda kosong :)
         {{ current_user.get_id() }}
     {% else %}
         {% print current_user.get_id() %}
