@@ -135,26 +135,30 @@ def upload_file():
 def list_gridfs_files():
     data_user_filename = []
     data_user_obj = []
+    banyak_data = 0
     # print FS.exists(user="ardinusawan")
     for grid_out in FS.find({"user": USER_LOGIN}):
         data = grid_out
         print data.filename
-        data_user_filename.append(data.filename)
-        data_user_obj.append(data._id)
+        data_user_filename.append(str(data.filename))
+        data_user_obj.append(str(data._id))
+        banyak_data +=1
     print data_user_filename;
     print FS.list()
-    # files = [FS.get_last_version(file) for file in data_user_filename]
+    files = [FS.get_last_version(file) for file in data_user_filename]
 
-    #
-    # file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
-    #                       (url_for('serve_gridfs_file', oid=str(file._id)),
-    #                        file.name) for file in files])
+
+    file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
+                          (url_for('serve_gridfs_file', oid=str(file._id)),
+                           file.name) for file in files])
+    print '########################################'
     Object.filename = data_user_filename
     Object.object_name = data_user_obj
-    # print str(Object.filename)
-    # print str(Object.object_name)
-    # return render_template('files.html', file_object=Object)
-    return render_template('files.html', file_object=data_user_obj, file_username=data_user_filename)
+    print Object.filename
+    print Object.object_name
+    return render_template('files.html', file_object=Object,file_count=banyak_data)
+    # return render_template('files.html', file_object=file_list)
+    # return render_template('files.html', file_object=data_user_obj, file_username=data_user_filename)
 
     # return '''
     # <!DOCTYPE html>
