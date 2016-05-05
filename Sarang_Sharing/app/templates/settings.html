@@ -1,4 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-        <h2>You are in protected settings page!</h2>
+    {% if not size %}
+    Silahkan logout dan login kembali
+        {{ current_user.get_id() }}
+    {% else %}
+        {% print current_user.get_id() %}
+        <br>
+    Data Usage = {{ size/1000000  }} - MegaByte
+    {% endif %}
+
 {% endblock %}
