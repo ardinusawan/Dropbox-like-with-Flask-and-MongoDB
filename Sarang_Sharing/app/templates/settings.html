@@ -6,7 +6,18 @@
     {% else %}
         {% print current_user.get_id() %}
         <br>
-    Data Usage = {{ size/1000000  }} - MegaByte
+        <br>Data Usage = {{ size/1000000  }} - MegaByte<br>
+        <br>Money User = RP.{{ money_user  }},00<br>
+        <br>Data limit = {{ limit_user/1000000  }} - MegaByte<br>
     {% endif %}
+
+    <br>Tambah Data Limit<br>
+            <form action="" method="POST" name="form">
+
+            <input type="submit" name="submit" class="btn btn-primary" value="1 MB = 10K" >
+            <input type="submit" name="submit" class="btn btn-success" value="5 MB = 50K">
+            <input type="submit" name="submit" class="btn btn-warning" value="10 MB = 100K">
+            <input type="submit" name="submit" class="btn btn-danger" value="15 MB = 150K">
+            </form>
 
 {% endblock %}
