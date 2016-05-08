@@ -7,7 +7,11 @@
  <h1>Files</h1>
     <ul>
 {% for i in file_object.object_name %}
-        <li><a href="files/{{ file_object.object_name[(loop.index)-1] }}">{{file_object.filename[(loop.index)-1] }}</a></li>
+        <li><a href="files/{{ file_object.object_name[(loop.index)-1] }}">{{file_object.filename[(loop.index)-1] }}</a>
+        <a href="delete/{{ file_object.object_name[(loop.index)-1] }}">
+          <button class="glyphicon glyphicon-remove"></button>
+        </a>
+        </li>
 {% endfor %}
     </ul>
 {% endif %}
