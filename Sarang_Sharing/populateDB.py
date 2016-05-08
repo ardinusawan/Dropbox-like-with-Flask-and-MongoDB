@@ -15,7 +15,7 @@ def main():
     pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
     # Insert the user in the DB
     try:
-        collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000})
+        collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
         print "User created."
     except DuplicateKeyError:
         print "User already present in DB."
