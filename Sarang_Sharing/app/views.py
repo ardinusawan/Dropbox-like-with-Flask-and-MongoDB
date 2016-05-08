@@ -14,6 +14,9 @@ from bson.objectid import ObjectId
 from gridfs import GridFS
 from gridfs.errors import NoFile
 
+import collections
+import bson
+from bson.codec_options import CodecOptions
 from copy import *
 
 USER_LOGIN = []
@@ -71,24 +74,74 @@ DB = MongoClient(["localhost:27017"]).gridfs_server  # DB Name
 # FS = GridFS(DB.database)
 FS = GridFS(DB)
 
-collection = MongoClient(["localhost:27017"])["gridfs_server"]["users"]
+users = MongoClient(["localhost:27017"])["gridfs_server"]["users"]
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+def find_money_limit():
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
+    money_user = (u['money'])
+    limit_user = (u['limit'])
+    mylist = [money_user,limit_user]
+    return (mylist)
+
+def is_money_not_enough(money):
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
+    print "uang =" + str(money)
+    print "money = " + str((u['money']))
+    if (int(money) - int((u['money']))   < 0):
+        return 1
+    else:
+        return 0
+
+def check(money,limit):
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
+    if money<0:
+        return refill_money()
+    else:
+        update_data_limit(money,limit)
+        return render_template('main.html')
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    tmp = check_user()
-    if tmp:
-        size = count_usage()
-        update_usage_user(size)
-        return render_template('settings.html', size=size)
-    else:
-        return render_template('settings.html')
+    if request.method == 'POST':
+        if request.form['submit'] == '1 MB = 10K':
+            money = find_money_limit()[0] - 10000
+            limit = find_money_limit()[1] + 1000000
+            return check(money,limit)
+
+        elif request.form['submit'] == '5 MB = 50K':
+            money = find_money_limit()[0] - 50000
+            limit = find_money_limit()[1] + 5000000
+            return check(money,limit)
+        elif request.form['submit'] == '10 MB = 100K':
+            money = find_money_limit()[0] - 100000
+            limit = find_money_limit()[1] + 10000000
+            return check(money,limit)
+        elif request.form['submit'] == '15 MB = 150K':
+            money = find_money_limit()[0] - 150000
+            limit = find_money_limit()[0] + 15000000
+            return check(money,limit)
+    elif request.method == 'GET':
+        tmp = check_user()
+        if tmp:
+            size = count_usage()
+            update_usage_user(size)
+            u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
+            money_user = (u['money'])
+            limit_user = (u['limit'])
+            return render_template('settings.html',size=size,money_user=money_user,limit_user=limit_user)
+        else:
+            return render_template('settings.html')
+
+@app.route('/refill',methods=['GET', 'POST'])
+@login_required
+def refill_money():
+    return render_template('refill_money.html')
 
 
 @app.route('/main', methods=['GET', 'POST'])
@@ -99,7 +152,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
 
-            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename)
+            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename,share=False)
             # tolong jangan dihapus
             # outputdata = FS.get(oid).read()
             # file_name = FS.get(oid).filename
@@ -144,16 +197,16 @@ def list_gridfs_files():
     if tmp:
         data_user_filename = []
         data_user_obj = []
-        banyak_data = 0
+        # banyak_data = 0
         # print FS.exists(user="ardinusawan")
         for grid_out in FS.find({"user": USER_LOGIN}):
             data = grid_out
             print data.filename
             data_user_filename.append(str(data.filename))
             data_user_obj.append(str(data._id))
-            banyak_data += 1
-        print data_user_filename;
-        print FS.list()
+            # banyak_data += 1
+        # print data_user_filename;
+        # print FS.list()
         # files = [FS.get_last_version(file) for file in data_user_filename]
         #
         #
@@ -165,7 +218,7 @@ def list_gridfs_files():
         Object.object_name = data_user_obj
         print Object.filename
         print Object.object_name
-        return render_template('files.html', file_object=Object, file_count=banyak_data)
+        return render_template('files.html', file_object=Object)
     else:
         # myuser = User.get_id()
         return render_template('files.html')
@@ -201,6 +254,13 @@ def serve_gridfs_file(oid):
     except NoFile:
         abort(404)
 
+@app.route('/delete/<oid>')
+@login_required
+def delete(oid):
+    FS.delete(ObjectId(oid))
+    return list_gridfs_files()
+
+
 
 @lm.user_loader
 def load_user(username):
@@ -224,10 +284,20 @@ def count_usage():
 
 
 def update_usage_user(size):
-    collection.update({
+    users.update({
         "_id": USER_LOGIN
     }, {
         '$set': {
             "usage": size
+        }
+    }, upsert=False)
+
+def update_data_limit(money,limit):
+    users.update({
+        "_id": USER_LOGIN
+    }, {
+        '$set': {
+            "money": money,
+            "limit": limit
         }
     }, upsert=False)
