@@ -21,6 +21,20 @@ from copy import *
 
 USER_LOGIN = []
 
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'exe', 'deb'])
+# FILE_LOCATION = '/home/ardi/PycharmProjects/KomputasiAwanGG/Sarang_Sharing/app/FILES/'
+
+DB = MongoClient(["localhost:27017"]).gridfs_server  # DB Name
+# DB = MongoClient(["localhost:27017"])["gridfs_server"]["filess"]
+# FS = GridFS(DB.database)
+FS = GridFS(DB)
+
+users = MongoClient(["localhost:27017"])["gridfs_server"]["users"]
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def home():
@@ -66,20 +80,6 @@ def write():
 
 
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'exe', 'deb'])
-# FILE_LOCATION = '/home/ardi/PycharmProjects/KomputasiAwanGG/Sarang_Sharing/app/FILES/'
-
-DB = MongoClient(["localhost:27017"]).gridfs_server  # DB Name
-# DB = MongoClient(["localhost:27017"])["gridfs_server"]["filess"]
-# FS = GridFS(DB.database)
-FS = GridFS(DB)
-
-users = MongoClient(["localhost:27017"])["gridfs_server"]["users"]
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 def find_money_limit():
     u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
@@ -143,6 +143,15 @@ def settings():
 def refill_money():
     return render_template('refill_money.html')
 
+@app.route('/share/<oid>')
+@login_required
+def share(oid):
+    # FS.delete(ObjectId(oid))
+    for grid_out in FS.find({'_id': ObjectId(oid) }):
+        data = grid_out
+        FS.put(FS.get(ObjectId(oid)),share= True,contentType=data.content_type,filename=data.filename,user=USER_LOGIN)
+        FS.delete(ObjectId(oid))
+    return upload_file()
 
 @app.route('/main', methods=['GET', 'POST'])
 @login_required
@@ -258,7 +267,7 @@ def serve_gridfs_file(oid):
 @login_required
 def delete(oid):
     FS.delete(ObjectId(oid))
-    return list_gridfs_files()
+    return upload_file()
 
 
 
@@ -291,6 +300,7 @@ def update_usage_user(size):
             "usage": size
         }
     }, upsert=False)
+
 
 def update_data_limit(money,limit):
     users.update({
