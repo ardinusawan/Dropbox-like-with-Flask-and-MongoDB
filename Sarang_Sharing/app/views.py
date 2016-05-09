@@ -146,12 +146,11 @@ def refill_money():
 @app.route('/share/<oid>')
 @login_required
 def share(oid):
-    # FS.delete(ObjectId(oid))
     for grid_out in FS.find({'_id': ObjectId(oid) }):
         data = grid_out
-        FS.put(FS.get(ObjectId(oid)),share= True,contentType=data.content_type,filename=data.filename,user=USER_LOGIN)
+        FS.put(FS.get(ObjectId(oid)),share= "Yes",contentType=data.content_type,filename=data.filename,user=USER_LOGIN)
         FS.delete(ObjectId(oid))
-    return upload_file()
+    return home()
 
 @app.route('/main', methods=['GET', 'POST'])
 @login_required
@@ -161,7 +160,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
 
-            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename,share=False)
+            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename,share="No")
             # tolong jangan dihapus
             # outputdata = FS.get(oid).read()
             # file_name = FS.get(oid).filename
@@ -206,6 +205,7 @@ def list_gridfs_files():
     if tmp:
         data_user_filename = []
         data_user_obj = []
+        data_sharing = []
         # banyak_data = 0
         # print FS.exists(user="ardinusawan")
         for grid_out in FS.find({"user": USER_LOGIN}):
@@ -213,6 +213,8 @@ def list_gridfs_files():
             print data.filename
             data_user_filename.append(str(data.filename))
             data_user_obj.append(str(data._id))
+            data_sharing.append(str(data.share))
+
             # banyak_data += 1
         # print data_user_filename;
         # print FS.list()
@@ -225,8 +227,10 @@ def list_gridfs_files():
         print '########################################'
         Object.filename = data_user_filename
         Object.object_name = data_user_obj
+        Object.share = data_sharing
         print Object.filename
         print Object.object_name
+        print Object.share
         return render_template('files.html', file_object=Object)
     else:
         # myuser = User.get_id()
@@ -263,11 +267,31 @@ def serve_gridfs_file(oid):
     except NoFile:
         abort(404)
 
+@app.route('/AllFiles')
+@login_required
+def list_all_gridfs_files():
+    data_user_filename = []
+    data_user_obj = []
+    data_sharing = []
+    for grid_out in FS.find({"share": "Yes"}):
+        data = grid_out
+        print data.filename
+        data_user_filename.append(str(data.filename))
+        data_user_obj.append(str(data._id))
+        data_sharing.append(str(data.share))
+    Object.filename = data_user_filename
+    Object.object_name = data_user_obj
+    Object.share = data_sharing
+    print Object.filename
+    print Object.object_name
+    print Object.share
+    return render_template('AllFiles.html', file_object=Object)
+
 @app.route('/delete/<oid>')
 @login_required
 def delete(oid):
     FS.delete(ObjectId(oid))
-    return upload_file()
+    return home()
 
 
 

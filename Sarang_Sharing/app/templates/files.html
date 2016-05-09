@@ -11,8 +11,23 @@
         <a href="delete/{{ file_object.object_name[(loop.index)-1] }}">
           <button class="glyphicon glyphicon-remove"></button>
         </a>
+        <a href="share/{{ file_object.object_name[(loop.index)-1] }}">
+          <button class="glyphicon glyphicon-share"></button>
+        </a>
         </li>
 {% endfor %}
     </ul>
+        <br><h1>File yang anda bagikan</h1><br>
+
+
+        {% for j in file_object.object_name %}
+            {% if file_object.share[(loop.index)-1] == 'Yes'  %}
+{#            {{ file_object.share }}#}
+                <br>
+                {{ file_object.filename[(loop.index)-1] }}
+                <br>
+            {% endif %}
+        {% endfor %}
+
 {% endif %}
 {% endblock %}
