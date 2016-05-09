@@ -1,3 +1,4 @@
+import flask
 from app import app, lm
 from flask import request, redirect, render_template, url_for, flash
 from flask.ext.login import login_user, logout_user, login_required
@@ -40,6 +41,30 @@ def allowed_file(filename):
 def home():
     return render_template('home.html')
 
+from werkzeug.security import generate_password_hash
+from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
+
+
+@app.route('/register',methods=['POST'])
+def register():
+    collection = MongoClient()["gridfs_server"]["users"]
+
+    # Ask for data to store
+    # user = raw_input("Enter your username: ")
+    # password = raw_input("Enter your password: ")
+    user = "igun"
+    password = "igun"
+    pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
+    # Insert the user in the DB
+    try:
+        collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
+        # print "User created."
+        return flask.jsonify(id=user,password=pass_hash)
+
+    except DuplicateKeyError:
+        # print "User already present in DB."
+        return flask.jsonify(pesan="Berhasil")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
