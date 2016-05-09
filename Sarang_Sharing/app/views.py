@@ -3,6 +3,7 @@ from app import app, lm
 from flask import request, redirect, render_template, url_for, flash
 from flask.ext.login import login_user, logout_user, login_required
 from .forms import LoginForm
+from .forms import RegisterForm
 from .user import User
 from .object import *
 
@@ -46,25 +47,33 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
 
-@app.route('/register',methods=['POST'])
+@app.route('/register',methods=['GET', 'POST'])
 def register():
+    global REGISTER
     collection = MongoClient()["gridfs_server"]["users"]
+    form = RegisterForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        user = app.config['USERS_COLLECTION'].find_one({"_id": form.username.data})
+        if not user:
+            user = form.username.data
+            password = form.password.data
+            pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
 
-    # Ask for data to store
-    # user = raw_input("Enter your username: ")
-    # password = raw_input("Enter your password: ")
-    user = "igun"
-    password = "igun"
-    pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
-    # Insert the user in the DB
-    try:
-        collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
-        # print "User created."
-        return flask.jsonify(id=user,password=pass_hash)
+            # Insert the user in the DB
+            try:
+                collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
+                # print "User created."
+                return flask.jsonify(id=user, password=pass_hash)
+                # flash("Data sucessfully inserted!", category='success')
+                # return redirect(request.args.get("next") or url_for("write"))
 
-    except DuplicateKeyError:
-        # print "User already present in DB."
-        return flask.jsonify(pesan="Berhasil")
+            except DuplicateKeyError:
+                # print "User already present in DB."
+                return flask.jsonify(pesan="Berhasil")
+                # flash("Error inserting into database!", category='error')
+        flash("Data is already in databases!", category="error")
+    return render_template('register.html', title='register', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
