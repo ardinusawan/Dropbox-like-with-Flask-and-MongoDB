@@ -49,7 +49,7 @@ from pymongo.errors import DuplicateKeyError
 
 @app.route('/register',methods=['GET', 'POST'])
 def register():
-    global REGISTER
+    global REGISTER, data
     collection = MongoClient()["gridfs_server"]["users"]
     form = RegisterForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -63,6 +63,7 @@ def register():
             try:
                 collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
                 # print "User created."
+                data = flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="yes")
                 return flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="yes")
                 # flash("Data sucessfully inserted!", category='success')
                 # return redirect(request.args.get("next") or url_for("write"))
@@ -74,7 +75,10 @@ def register():
         flash("Data is already in databases!", category="error")
     return render_template('register.html', title='register', form=form)
 
-
+@app.route("/register/rest", methods=['GET'])
+def tas():
+    if request.method == 'GET':
+        return json.dumps(data)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global USER_LOGIN
