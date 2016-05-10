@@ -38,16 +38,18 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
 
 from werkzeug.security import generate_password_hash
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
 
-@app.route('/register',methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     global REGISTER, data
     collection = MongoClient()["gridfs_server"]["users"]
@@ -63,8 +65,8 @@ def register():
             try:
                 collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
                 # print "User created."
-                data = flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="yes")
-                return flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="selamat datang di sarang sharing")
+                data = flask.jsonify(id=user, password=pass_hash, pesan_dari_wawan="yes")
+                return flask.jsonify(id=user, password=pass_hash, pesan_dari_wawan="selamat datang di sarang sharing")
                 # flash("Data sucessfully inserted!", category='success')
                 # return redirect(request.args.get("next") or url_for("write"))
 
@@ -75,8 +77,9 @@ def register():
         flash("Data is already in databases!", category="error")
     return render_template('register.html', title='register', form=form)
 
-@app.route('/register2',methods=['GET', 'POST'])
-def register():
+
+@app.route('/register2', methods=['GET', 'POST'])
+def register2():
     global REGISTER, data
     collection = MongoClient()["gridfs_server"]["users"]
     form = RegisterForm()
@@ -91,8 +94,8 @@ def register():
             try:
                 collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
                 # print "User created."
-                #data = flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="yes")
-                return flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="selamat datang di sarang sharing")
+                # data = flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="yes")
+                return flask.jsonify(id=user, password=pass_hash, pesan_dari_wawan="selamat datang di sarang sharing")
                 # flash("Data sucessfully inserted!", category='success')
                 # return redirect(request.args.get("next") or url_for("write"))
 
@@ -108,6 +111,8 @@ def register():
 def tas():
     if request.method == 'GET':
         return json.dumps(data)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global USER_LOGIN
@@ -152,25 +157,29 @@ def find_money_limit():
     u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
     money_user = (u['money'])
     limit_user = (u['limit'])
-    mylist = [money_user,limit_user]
+    mylist = [money_user, limit_user]
     return (mylist)
+
 
 def is_money_not_enough(money):
     u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
     print "uang =" + str(money)
     print "money = " + str((u['money']))
-    if (int(money) - int((u['money']))   < 0):
+    if (int(money) - int((u['money'])) < 0):
         return 1
     else:
         return 0
 
-def check(money,limit):
+
+def check(money, limit):
     u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
-    if money<0:
-        return refill_money()
+    if money < 0:
+        # return refill_money()
+        return render_template('pemberitahuan.html')
     else:
-        update_data_limit(money,limit)
+        update_data_limit(money, limit)
         return render_template('main.html')
+
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
@@ -179,20 +188,20 @@ def settings():
         if request.form['submit'] == '1 MB = 10K':
             money = find_money_limit()[0] - 10000
             limit = find_money_limit()[1] + 1000000
-            return check(money,limit)
+            return check(money, limit)
 
         elif request.form['submit'] == '5 MB = 50K':
             money = find_money_limit()[0] - 50000
             limit = find_money_limit()[1] + 5000000
-            return check(money,limit)
+            return check(money, limit)
         elif request.form['submit'] == '10 MB = 100K':
             money = find_money_limit()[0] - 100000
             limit = find_money_limit()[1] + 10000000
-            return check(money,limit)
+            return check(money, limit)
         elif request.form['submit'] == '15 MB = 150K':
             money = find_money_limit()[0] - 150000
             limit = find_money_limit()[0] + 15000000
-            return check(money,limit)
+            return check(money, limit)
     elif request.method == 'GET':
         tmp = check_user()
         if tmp:
@@ -201,9 +210,10 @@ def settings():
             u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
             money_user = (u['money'])
             limit_user = (u['limit'])
-            return render_template('settings.html',size=size,money_user=money_user,limit_user=limit_user)
+            return render_template('settings.html', size=size, money_user=money_user, limit_user=limit_user)
         else:
             return render_template('settings.html')
+
 
 @app.route('/settings2', methods=['GET', 'POST'])
 # @login_required
@@ -212,20 +222,20 @@ def settings2():
         if request.form['submit'] == '1 MB = 10K':
             money = find_money_limit()[0] - 10000
             limit = find_money_limit()[1] + 1000000
-            return check(money,limit)
+            return check(money, limit)
 
         elif request.form['submit'] == '5 MB = 50K':
             money = find_money_limit()[0] - 50000
             limit = find_money_limit()[1] + 5000000
-            return check(money,limit)
+            return check(money, limit)
         elif request.form['submit'] == '10 MB = 100K':
             money = find_money_limit()[0] - 100000
             limit = find_money_limit()[1] + 10000000
-            return check(money,limit)
+            return check(money, limit)
         elif request.form['submit'] == '15 MB = 150K':
             money = find_money_limit()[0] - 150000
             limit = find_money_limit()[0] + 15000000
-            return check(money,limit)
+            return check(money, limit)
     elif request.method == 'GET':
         # tmp = check_user()
         if 1:
@@ -234,25 +244,81 @@ def settings2():
             u = app.config['USERS_COLLECTION'].find_one({"_id": "a"})
             money_user = (u['money'])
             limit_user = (u['limit'])
-            return flask.jsonify(size=size,money_user=money_user,limit_user=limit_user)
+            return flask.jsonify(size=size, money_user=money_user, limit_user=limit_user)
             # return render_template('settings.html',size=size,money_user=money_user,limit_user=limit_user)
         else:
             return render_template('settings.html')
 
 
+'''
 @app.route('/refill',methods=['GET', 'POST'])
 @login_required
 def refill_money():
-    return render_template('refill_money.html')
+    if request.method == 'POST':
+        money = find_money_limit()[0]
+        print money
+        print "bangke"
+        return render_template('refill_money.html')
+
+'''
+
+
+@app.route('/refill', methods=['GET', 'POST'])
+@login_required
+def refill_money():
+    if request.method == 'POST':
+        print "wow"
+        if request.form['submit'] == '100K':
+            money = find_money_limit()[0] + 100000
+            return update_money(money)
+        elif request.form['submit'] == '200K':
+            money = find_money_limit()[0] + 200000
+            return update_money(money)
+        elif request.form['submit'] == '300K':
+            money = find_money_limit()[0] + 300000
+            return update_money(money)
+        elif request.form['submit'] == '400K':
+            money = find_money_limit()[0] + 400000
+            return update_money(money)
+    elif request.method == 'GET':
+        return render_template('refill_money.html')
+
+
+def update_data_money(money):
+    users.update({
+        "_id": USER_LOGIN
+    }, {
+        '$set': {
+            "money": money
+        }
+    }, upsert=False)
+
+
+def update_money(money):
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
+
+    update_data_money(money)
+    return render_template('main.html')
+
 
 @app.route('/share/<oid>')
 @login_required
 def share(oid):
-    for grid_out in FS.find({'_id': ObjectId(oid) }):
+    for grid_out in FS.find({'_id': ObjectId(oid)}):
         data = grid_out
-        FS.put(FS.get(ObjectId(oid)),share= "Yes",contentType=data.content_type,filename=data.filename,user=USER_LOGIN)
+        FS.put(FS.get(ObjectId(oid)), share="Yes", contentType=data.content_type, filename=data.filename,
+               user=USER_LOGIN)
         FS.delete(ObjectId(oid))
     return home()
+
+
+def find_data_limit():
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
+    money_user = (u['money'])
+    limit_user = (u['limit'])
+    mylist = [limit_user]
+    return (mylist)
+
 
 @app.route('/main', methods=['GET', 'POST'])
 @login_required
@@ -262,7 +328,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
 
-            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename,share="No")
+            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename, share="No")
             # tolong jangan dihapus
             # outputdata = FS.get(oid).read()
             # file_name = FS.get(oid).filename
@@ -298,8 +364,6 @@ def check_user():
         return False;
     else:
         return True;
-
-      
 
 
 @app.route('/files')
@@ -371,6 +435,7 @@ def serve_gridfs_file(oid):
     except NoFile:
         abort(404)
 
+
 @app.route('/AllFiles')
 @login_required
 def list_all_gridfs_files():
@@ -391,12 +456,12 @@ def list_all_gridfs_files():
     print Object.share
     return render_template('AllFiles.html', file_object=Object)
 
+
 @app.route('/delete/<oid>')
 @login_required
 def delete(oid):
     FS.delete(ObjectId(oid))
     return home()
-
 
 
 @lm.user_loader
@@ -430,7 +495,7 @@ def update_usage_user(size):
     }, upsert=False)
 
 
-def update_data_limit(money,limit):
+def update_data_limit(money, limit):
     users.update({
         "_id": USER_LOGIN
     }, {
