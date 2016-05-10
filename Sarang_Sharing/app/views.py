@@ -63,7 +63,7 @@ def register():
             try:
                 collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
                 # print "User created."
-                return flask.jsonify(id=user, password=pass_hash)
+                return flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="yes")
                 # flash("Data sucessfully inserted!", category='success')
                 # return redirect(request.args.get("next") or url_for("write"))
 
