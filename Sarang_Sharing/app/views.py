@@ -172,6 +172,41 @@ def settings():
         else:
             return render_template('settings.html')
 
+@app.route('/settings2', methods=['GET', 'POST'])
+@login_required
+def settings2():
+    if request.method == 'POST':
+        if request.form['submit'] == '1 MB = 10K':
+            money = find_money_limit()[0] - 10000
+            limit = find_money_limit()[1] + 1000000
+            return check(money,limit)
+
+        elif request.form['submit'] == '5 MB = 50K':
+            money = find_money_limit()[0] - 50000
+            limit = find_money_limit()[1] + 5000000
+            return check(money,limit)
+        elif request.form['submit'] == '10 MB = 100K':
+            money = find_money_limit()[0] - 100000
+            limit = find_money_limit()[1] + 10000000
+            return check(money,limit)
+        elif request.form['submit'] == '15 MB = 150K':
+            money = find_money_limit()[0] - 150000
+            limit = find_money_limit()[0] + 15000000
+            return check(money,limit)
+    elif request.method == 'GET':
+        # tmp = check_user()
+        if 1:
+            size = count_usage()
+            update_usage_user(size)
+            u = app.config['USERS_COLLECTION'].find_one({"_id": "a"})
+            money_user = (u['money'])
+            limit_user = (u['limit'])
+            return flask.jsonify(size=size,money_user=money_user,limit_user=limit_user)
+            # return render_template('settings.html',size=size,money_user=money_user,limit_user=limit_user)
+        else:
+            return render_template('settings.html')
+
+
 @app.route('/refill',methods=['GET', 'POST'])
 @login_required
 def refill_money():
@@ -230,6 +265,8 @@ def check_user():
         return False;
     else:
         return True;
+
+      
 
 
 @app.route('/files')
