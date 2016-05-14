@@ -1,34 +1,36 @@
 import flask
 from app import app, lm
 from flask import request, redirect, render_template, url_for, flash
-from flask.ext.login import login_user, logout_user, login_required
+from flask.ext.login import login_user, logout_user, login_required,current_user
 from .forms import LoginForm
 from .forms import RegisterForm
 from .user import User
 from .object import *
+import json
 
 from flask import Flask, request, redirect, url_for, make_response, abort
 from werkzeug import secure_filename
 
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 from gridfs import GridFS
 from gridfs.errors import NoFile
+
+from werkzeug.security import generate_password_hash
+from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
 
 import collections
 import bson
 from bson.codec_options import CodecOptions
 from copy import *
 
+
 USER_LOGIN = []
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'exe', 'deb'])
-# FILE_LOCATION = '/home/ardi/PycharmProjects/KomputasiAwanGG/Sarang_Sharing/app/FILES/'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'exe', 'deb', 'doc', 'xls', 'ppt', 'pps', 'odt', 'ods', 'odp', 'docx'])
 
-DB = MongoClient(["localhost:27017"]).gridfs_server  # DB Name
-# DB = MongoClient(["localhost:27017"])["gridfs_server"]["filess"]
-# FS = GridFS(DB.database)
+DB = MongoClient(["localhost:27017"]).gridfs_server
 FS = GridFS(DB)
 
 users = MongoClient(["localhost:27017"])["gridfs_server"]["users"]
@@ -39,146 +41,77 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def home():
-    return render_template('home.html')
+    if request.method == 'GET' and current_user.is_authenticated():
+        user = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+        if user:
+            Message = "Hey " + current_user.username + "!"
+            return flask.jsonify(Message=Message)
+    return flask.jsonify(Message="Welcome to Sharang Sharing, please login")
 
-
-from werkzeug.security import generate_password_hash
-from pymongo import MongoClient
-from pymongo.errors import DuplicateKeyError
-
-
-@app.route('/register', methods=['GET', 'POST'])
+@app.route("/register", methods=['GET','POST'])
 def register():
-    global REGISTER, data
-    collection = MongoClient()["gridfs_server"]["users"]
-    form = RegisterForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        user = app.config['USERS_COLLECTION'].find_one({"_id": form.username.data})
-        if not user:
-            user = form.username.data
-            password = form.password.data
-            pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
-
-            # Insert the user in the DB
-            try:
-                collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
-                # print "User created."
-                data = flask.jsonify(id=user, password=pass_hash, pesan_dari_wawan="yes")
-                return flask.jsonify(id=user, password=pass_hash, pesan_dari_wawan="selamat datang di sarang sharing")
-                # flash("Data sucessfully inserted!", category='success')
-                # return redirect(request.args.get("next") or url_for("write"))
-
-            except DuplicateKeyError:
-                # print "User already present in DB."
-                return flask.jsonify(pesan="Berhasil")
-                # flash("Error inserting into database!", category='error')
-        flash("Data is already in databases!", category="error")
-    return render_template('register.html', title='register', form=form)
-
-
-@app.route('/register2', methods=['GET', 'POST'])
-def register2():
-    global REGISTER, data
-    collection = MongoClient()["gridfs_server"]["users"]
-    form = RegisterForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        user = app.config['USERS_COLLECTION'].find_one({"_id": form.username.data})
-        if not user:
-            user = form.username.data
-            password = form.password.data
-            pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
-
-            # Insert the user in the DB
-            try:
-                collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
-                # print "User created."
-                # data = flask.jsonify(id=user, password=pass_hash,pesan_dari_wawan="yes")
-                return flask.jsonify(id=user, password=pass_hash, pesan_dari_wawan="selamat datang di sarang sharing")
-                # flash("Data sucessfully inserted!", category='success')
-                # return redirect(request.args.get("next") or url_for("write"))
-
-            except DuplicateKeyError:
-                # print "User already present in DB."
-                return flask.jsonify(pesan="Berhasil")
-                # flash("Error inserting into database!", category='error')
-        flash("Data is already in databases!", category="error")
-    return render_template('register.html', title='register', form=form)
-
-
-@app.route("/register/rest", methods=['GET'])
-def tas():
     if request.method == 'GET':
-        return json.dumps(data)
+        return json.dumps({"register":"Hallo this is register page"})
+    if request.method == 'POST':
+        collection = MongoClient()["gridfs_server"]["users"]
+        username_post = request.form['username_post']
+        password_post = request.form['password_post']
+        user = app.config['USERS_COLLECTION'].find_one({"_id": username_post})
+        if not user:
+            user = username_post
+            password = password_post
+            pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
+            collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
+            return flask.jsonify(Message='data inserted')
+        return flask.jsonify(Message="Maaf, data telah ada")
 
-
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=['GET','POST'])
 def login():
-    global USER_LOGIN
-    form = LoginForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        user = app.config['USERS_COLLECTION'].find_one({"_id": form.username.data})
-        if user and User.validate_login(user['password'], form.password.data):
+    # global USER_LOGIN
+    if request.method == 'POST':
+        username_post = request.form['username_post']
+        password_post = request.form['password_post']
+        user = app.config['USERS_COLLECTION'].find_one({"_id": username_post})
+        if user and User.validate_login(user['password'],password_post):
             user_obj = User(user['_id'])
             login_user(user_obj)
-            a = str(user_obj.username)
-            USER_LOGIN = ""
-            # try:
-            USER_LOGIN = a
-            # finally:
-            # return USER_LOGIN
-            flash("Logged in successfully!", category='success')
-            return redirect(request.args.get("next") or url_for("write"))
-        flash("Wrong username or password!", category='error')
-    return render_template('login.html', title='login', form=form)
+            return flask.jsonify(Message='True')
+        return flask.jsonify(Message="Wrong username or password")
+    if request.method == 'GET':
+        return flask.jsonify(Message="Hello this is login page")
 
-
-@app.route('/logout')
+@app.route('/logout',methods=['GET'])
 def logout():
-    # print USER_LOGIN
+    # global USER_LOGIN
     logout_user()
-    return redirect(url_for('login'))
+    # USER_LOGIN=""
+    return flask.jsonify(Message="Logout Success")
 
+@app.route('/upload/<file_name>,<file_type>', methods=['PUT'])
+def upload(file_name,file_type):
+    with FS.new_file(filename=file_name+"."+file_type, content_type=file_type ,user=current_user.username, share="No") as fp:
+        fp.write(request.data)
+        file_id = fp._id
+    if FS.find_one(file_id) is not None:
+        return flask.jsonify(Message='File saved successfully'),200
+    else:
+        return flask.jsonify(Message='Error occurred while saving file.'), 500
 
-@app.route('/write', methods=['GET', 'POST'])
+@app.route('/download/<file_name>')
+def index(file_name):
+    grid_fs_file = FS.find_one({'filename': file_name})
+    response = make_response(grid_fs_file.read())
+    response.headers['Content-Type'] = 'application/octet-stream'
+    response.headers["Content-Disposition"] = "attachment; filename={}".format(file_name)
+    return response
+
+@app.route('/main', methods=['GET'])
 @login_required
-def write():
-    return render_template('write.html')
-
-
-##
-
-
-
-
-
-def find_money_limit():
-    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
-    money_user = (u['money'])
-    limit_user = (u['limit'])
-    mylist = [money_user, limit_user]
-    return (mylist)
-
-
-def is_money_not_enough(money):
-    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
-    print "uang =" + str(money)
-    print "money = " + str((u['money']))
-    if (int(money) - int((u['money'])) < 0):
-        return 1
-    else:
-        return 0
-
-
-def check(money, limit):
-    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
-    if money < 0:
-        # return refill_money()
-        return render_template('pemberitahuan.html')
-    else:
-        update_data_limit(money, limit)
-        return render_template('main.html')
+def upload_file():
+    if request.method == 'GET':
+        return flask.jsonify(List_Data=FS.list(), current_user=current_user.username)
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -189,7 +122,6 @@ def settings():
             money = find_money_limit()[0] - 10000
             limit = find_money_limit()[1] + 1000000
             return check(money, limit)
-
         elif request.form['submit'] == '5 MB = 50K':
             money = find_money_limit()[0] - 50000
             limit = find_money_limit()[1] + 5000000
@@ -203,71 +135,65 @@ def settings():
             limit = find_money_limit()[0] + 15000000
             return check(money, limit)
     elif request.method == 'GET':
-        tmp = check_user()
-        if tmp:
+        if current_user.is_authenticated():
             size = count_usage()
             update_usage_user(size)
-            u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
+            u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
             money_user = (u['money'])
             limit_user = (u['limit'])
-            return render_template('settings.html', size=size, money_user=money_user, limit_user=limit_user)
+            return flask.jsonify(current_user=current_user.username,size=size, money_user=money_user, limit_user=limit_user)
         else:
-            return render_template('settings.html')
+            return flask.jsonify(Message="Nothing to see")
+
+def count_usage():
+    size = 0
+    for grid_out in FS.find({"user": current_user.username}):
+        data = grid_out
+        size += data.length
+        print size
+    return size
+
+def update_usage_user(size):
+    users.update({
+        "_id": current_user.username
+    }, {
+        '$set': {
+            "usage": size
+        }
+    }, upsert=False)
 
 
-@app.route('/settings2', methods=['GET', 'POST'])
-# @login_required
-def settings2():
-    if request.method == 'POST':
-        if request.form['submit'] == '1 MB = 10K':
-            money = find_money_limit()[0] - 10000
-            limit = find_money_limit()[1] + 1000000
-            return check(money, limit)
+def find_money_limit():
+    u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    money_user = (u['money'])
+    limit_user = (u['limit'])
+    mylist = [money_user, limit_user]
+    return (mylist)
 
-        elif request.form['submit'] == '5 MB = 50K':
-            money = find_money_limit()[0] - 50000
-            limit = find_money_limit()[1] + 5000000
-            return check(money, limit)
-        elif request.form['submit'] == '10 MB = 100K':
-            money = find_money_limit()[0] - 100000
-            limit = find_money_limit()[1] + 10000000
-            return check(money, limit)
-        elif request.form['submit'] == '15 MB = 150K':
-            money = find_money_limit()[0] - 150000
-            limit = find_money_limit()[0] + 15000000
-            return check(money, limit)
-    elif request.method == 'GET':
-        # tmp = check_user()
-        if 1:
-            size = count_usage()
-            update_usage_user(size)
-            u = app.config['USERS_COLLECTION'].find_one({"_id": "a"})
-            money_user = (u['money'])
-            limit_user = (u['limit'])
-            return flask.jsonify(size=size, money_user=money_user, limit_user=limit_user)
-            # return render_template('settings.html',size=size,money_user=money_user,limit_user=limit_user)
-        else:
-            return render_template('settings.html')
+def check(money, limit):
+    u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    if money < 0:
+        # return refill_money()
+        return flask.jsonify(Message="Uang anda tidak cukup saatnya membeli saldo pada page refill")
+    else:
+        update_data_limit(money, limit)
+        return flask.jsonify(Message="Success")
 
 
-'''
-@app.route('/refill',methods=['GET', 'POST'])
-@login_required
-def refill_money():
-    if request.method == 'POST':
-        money = find_money_limit()[0]
-        print money
-        print "bangke"
-        return render_template('refill_money.html')
-
-'''
-
+def update_data_limit(money, limit):
+    users.update({
+        "_id": current_user.username
+    }, {
+        '$set': {
+            "money": money,
+            "limit": limit
+        }
+    }, upsert=False)
 
 @app.route('/refill', methods=['GET', 'POST'])
 @login_required
 def refill_money():
     if request.method == 'POST':
-        print "wow"
         if request.form['submit'] == '100K':
             money = find_money_limit()[0] + 100000
             return update_money(money)
@@ -281,160 +207,67 @@ def refill_money():
             money = find_money_limit()[0] + 400000
             return update_money(money)
     elif request.method == 'GET':
-        return render_template('refill_money.html')
+        return flask.jsonify(Message="refill your money!")
 
+
+def update_money(money):
+    u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    update_data_money(money)
+    return flask.jsonify(Message="Success adding "+str(money))
 
 def update_data_money(money):
     users.update({
-        "_id": USER_LOGIN
+        "_id": current_user.username
     }, {
         '$set': {
             "money": money
         }
     }, upsert=False)
 
-
-def update_money(money):
-    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
-
-    update_data_money(money)
-    return render_template('main.html')
-
-
-@app.route('/share/<oid>')
+@app.route('/share/<flag>/<oid>')
 @login_required
-def share(oid):
+def share(flag,oid):
     for grid_out in FS.find({'_id': ObjectId(oid)}):
         data = grid_out
-        FS.put(FS.get(ObjectId(oid)), share="Yes", contentType=data.content_type, filename=data.filename,
-               user=USER_LOGIN)
+        FS.put(FS.get(ObjectId(oid)), share=flag, contentType=data.content_type, filename=data.filename,
+               user=current_user.username)
         FS.delete(ObjectId(oid))
-    return home()
-
-
-def find_data_limit():
-    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
-    money_user = (u['money'])
-    limit_user = (u['limit'])
-    mylist = [limit_user]
-    return (mylist)
-
-
-@app.route('/main', methods=['GET', 'POST'])
-@login_required
-def upload_file():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-
-            oid = FS.put(file, content_type=file.content_type, user=USER_LOGIN, filename=filename, share="No")
-            # tolong jangan dihapus
-            # outputdata = FS.get(oid).read()
-            # file_name = FS.get(oid).filename
-            # file_save = FILE_LOCATION + file_name
-            # outfilename = file_save
-            # output = open(outfilename,'wb')
-            # output.write(outputdata)
-            # output.close()
-            # tolong jangan dihapus
-            return redirect(url_for('serve_gridfs_file', oid=str(oid)))
-    return render_template('main.html')
-
-    # return '''
-    # <!DOCTYPE html>
-    # <html>
-    # <head>
-    # <title>Upload new file</title>
-    # </head>
-    # <body>
-    # <h1>Upload new file</h1>
-    # <form action="" method="post" enctype="multipart/form-data">
-    # <p><input type="file" name="file"></p>
-    # <p><input type="submit" value="Upload"></p>
-    # </form>
-    # <a href="%s">All files</a>
-    # </body>
-    # </html>
-    # ''' % url_for('list_gridfs_files')
-
-
-def check_user():
-    if not USER_LOGIN:
-        return False;
-    else:
-        return True;
-
+    return flask.jsonify(Message="Success edit share flag to "+flag)
+#masih ngebug kalo ubah flag ke NO
 
 @app.route('/files')
 @login_required
 def list_gridfs_files():
-    tmp = check_user()
-    if tmp:
+    if current_user.is_authenticated():
         data_user_filename = []
         data_user_obj = []
         data_sharing = []
-        # banyak_data = 0
-        # print FS.exists(user="ardinusawan")
-        for grid_out in FS.find({"user": USER_LOGIN}):
+        for grid_out in FS.find({"user": current_user.username}):
             data = grid_out
             print data.filename
             data_user_filename.append(str(data.filename))
             data_user_obj.append(str(data._id))
             data_sharing.append(str(data.share))
-
-            # banyak_data += 1
-        # print data_user_filename;
-        # print FS.list()
-        # files = [FS.get_last_version(file) for file in data_user_filename]
-        #
-        #
-        # file_list = "\n".join(['<li><a href="%s">%s</a></li>' %
-        #                       (url_for('serve_gridfs_file', oid=str(file._id)),
-        #                        file.name) for file in files])
-        print '########################################'
         Object.filename = data_user_filename
         Object.object_name = data_user_obj
         Object.share = data_sharing
         print Object.filename
         print Object.object_name
         print Object.share
-        return render_template('files.html', file_object=Object)
-    else:
-        # myuser = User.get_id()
-        return render_template('files.html')
-        # return render_template('files.html', file_object=file_list)
-        # return render_template('files.html', file_object=data_user_obj, file_username=data_user_filename)
-
-        # return '''
-        # <!DOCTYPE html>
-        # <html>
-        # <head>
-        # <title>Files</title>
-        # </head>
-        # <body>
-        # <h1>Files</h1>
-        # <ul>
-        # %s
-        # </ul>
-        # <a href="%s">Upload new file</a>
-        # </body>
-        # </html>
-        # ''' % (file_list, url_for('upload_file'))
+        # return flask.jsonify(Message=Object)
+        return flask.jsonify(current_user=current_user.username,Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
 
 
 @app.route('/files/<oid>')
 @login_required
 def serve_gridfs_file(oid):
     try:
-        # Convert the string to an ObjectId instance
         file_object = FS.get(ObjectId(oid))
         response = make_response(file_object.read())
         response.mimetype = file_object.content_type
         return response
     except NoFile:
         abort(404)
-
 
 @app.route('/AllFiles')
 @login_required
@@ -454,14 +287,14 @@ def list_all_gridfs_files():
     print Object.filename
     print Object.object_name
     print Object.share
-    return render_template('AllFiles.html', file_object=Object)
+    return flask.jsonify(Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
 
 
 @app.route('/delete/<oid>')
 @login_required
 def delete(oid):
     FS.delete(ObjectId(oid))
-    return home()
+    return flask.jsonify(Message="Success Deleted")
 
 
 @lm.user_loader
@@ -472,35 +305,4 @@ def load_user(username):
     return User(u['_id'])
 
 
-def count_usage():
-    size = 0
-    for grid_out in FS.find({"user": USER_LOGIN}):
-        data = grid_out
-        size += data.length
-        print size
-    return size
-    # print data.filename
-    # data_user_filename.append(str(data.filename))
-    # data_user_obj.append(str(data._id))
-    # banyak_data +=1
 
-
-def update_usage_user(size):
-    users.update({
-        "_id": USER_LOGIN
-    }, {
-        '$set': {
-            "usage": size
-        }
-    }, upsert=False)
-
-
-def update_data_limit(money, limit):
-    users.update({
-        "_id": USER_LOGIN
-    }, {
-        '$set': {
-            "money": money,
-            "limit": limit
-        }
-    }, upsert=False)
