@@ -1,4 +1,6 @@
 import flask
+from flask.ext.json import json_response
+
 from app import app, lm
 from flask import request, redirect, render_template, url_for, flash
 from flask.ext.login import login_user, logout_user, login_required,current_user
@@ -77,10 +79,12 @@ def login():
         if user and User.validate_login(user['password'],password_post):
             user_obj = User(user['_id'])
             login_user(user_obj)
-            return flask.jsonify(Message='True')
+            # return flask.jsonify(Message='True')
+            return json_response(Message='True')
         return flask.jsonify(Message="Wrong username or password")
     if request.method == 'GET':
         return flask.jsonify(Message="Hello this is login page")
+
 
 @app.route('/logout',methods=['GET'])
 def logout():
