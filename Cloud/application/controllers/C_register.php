@@ -20,8 +20,8 @@ class C_register extends CI_Controller
 	{
 		$curl = curl_init();
 
-		$username = $this->input->post('username_post');
-		$password = $this->input->post('password_post');
+		$data['username'] = $this->input->post('username_post');
+		$data['password'] = $this->input->post('password_post');
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
@@ -32,7 +32,7 @@ class C_register extends CI_Controller
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "username_post=".$username."&password_post=".$password,
+		  CURLOPT_POSTFIELDS => "username_post=".$data['username']."&password_post=".$data['password'],
 		  CURLOPT_HTTPHEADER => array(
 		    "cache-control: no-cache",
 		    "content-type: application/x-www-form-urlencoded",
@@ -52,6 +52,7 @@ class C_register extends CI_Controller
 		else 
 		{
 		  echo $response;
+		  $this->load->view('user/main');
 		}
 	}
 }
