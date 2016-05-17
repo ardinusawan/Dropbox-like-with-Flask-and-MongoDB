@@ -45,10 +45,12 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET'])
 def home():
-    if request.method == 'GET' and current_user.is_authenticated():
-        user = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    # if request.method == 'GET' and current_user.is_authenticated():
+    if request.method == 'GET':
+        # user = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+        user = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
         if user:
-            Message = "Hey " + current_user.username + "!"
+            Message = "Hey " + USER_LOGIN + "!"
             return flask.jsonify(Message=Message)
     return flask.jsonify(Message="Welcome to Sharang Sharing, please login")
 
@@ -71,7 +73,7 @@ def register():
 
 @app.route("/login", methods=['GET','POST'])
 def login():
-    # global USER_LOGIN
+    global USER_LOGIN
     if request.method == 'POST':
         username_post = request.form['username_post']
         password_post = request.form['password_post']
@@ -79,11 +81,17 @@ def login():
         if user and User.validate_login(user['password'],password_post):
             user_obj = User(user['_id'])
             login_user(user_obj)
+            a = str(user_obj.username)
+            USER_LOGIN = ""
+            # try:
+            USER_LOGIN = a
+            # finally:
+            # return USER_LOGIN
             # return flask.jsonify(Message='True')
             return json_response(Message='True')
         return flask.jsonify(Message="Wrong username or password")
     if request.method == 'GET':
-        return flask.jsonify(Message="Hello this is login page")
+        return flask.jsonify(Message="Hello this is login page",status=0)
 
 
 @app.route('/logout',methods=['GET'])
@@ -95,7 +103,8 @@ def logout():
 
 @app.route('/upload/<file_name>,<file_type>', methods=['PUT'])
 def upload(file_name,file_type):
-    with FS.new_file(filename=file_name+"."+file_type, content_type=file_type ,user=current_user.username, share="No") as fp:
+    # with FS.new_file(filename=file_name+"."+file_type, content_type=file_type ,user=current_user.username, share="No") as fp:
+    with FS.new_file(filename=file_name+"."+file_type, content_type=file_type ,user=USER_LOGIN, share="No") as fp:
         fp.write(request.data)
         file_id = fp._id
     if FS.find_one(file_id) is not None:
@@ -112,10 +121,11 @@ def index(file_name):
     return response
 
 @app.route('/main', methods=['GET'])
-@login_required
+# @login_required
 def upload_file():
     if request.method == 'GET':
-        return flask.jsonify(List_Data=FS.list(), current_user=current_user.username)
+        # return flask.jsonify(List_Data=FS.list(), current_user=current_user.username,status=1)
+        return flask.jsonify(List_Data=FS.list(), current_user=USER_LOGIN,status=1)
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -139,19 +149,23 @@ def settings():
             limit = find_money_limit()[0] + 15000000
             return check(money, limit)
     elif request.method == 'GET':
+        # if current_user.is_authenticated():
         if current_user.is_authenticated():
             size = count_usage()
             update_usage_user(size)
-            u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+            # u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+            u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
             money_user = (u['money'])
             limit_user = (u['limit'])
-            return flask.jsonify(current_user=current_user.username,size=size, money_user=money_user, limit_user=limit_user)
+            # return flask.jsonify(current_user=current_user.username,size=size, money_user=money_user, limit_user=limit_user)
+            return flask.jsonify(current_user=USER_LOGIN,size=size, money_user=money_user, limit_user=limit_user)
         else:
             return flask.jsonify(Message="Nothing to see")
 
 def count_usage():
     size = 0
-    for grid_out in FS.find({"user": current_user.username}):
+    # for grid_out in FS.find({"user": current_user.username}):
+    for grid_out in FS.find({"user": USER_LOGIN}):
         data = grid_out
         size += data.length
         print size
@@ -159,7 +173,8 @@ def count_usage():
 
 def update_usage_user(size):
     users.update({
-        "_id": current_user.username
+        # "_id": current_user.username
+        "_id": USER_LOGIN
     }, {
         '$set': {
             "usage": size
@@ -168,14 +183,16 @@ def update_usage_user(size):
 
 
 def find_money_limit():
-    u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    # u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
     money_user = (u['money'])
     limit_user = (u['limit'])
     mylist = [money_user, limit_user]
     return (mylist)
 
 def check(money, limit):
-    u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    # u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
     if money < 0:
         # return refill_money()
         return flask.jsonify(Message="Uang anda tidak cukup saatnya membeli saldo pada page refill")
@@ -186,7 +203,8 @@ def check(money, limit):
 
 def update_data_limit(money, limit):
     users.update({
-        "_id": current_user.username
+        # "_id": current_user.username
+        "_id": USER_LOGIN
     }, {
         '$set': {
             "money": money,
@@ -195,7 +213,7 @@ def update_data_limit(money, limit):
     }, upsert=False)
 
 @app.route('/refill', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def refill_money():
     if request.method == 'POST':
         if request.form['submit'] == '100K':
@@ -215,13 +233,15 @@ def refill_money():
 
 
 def update_money(money):
-    u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    # u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
     update_data_money(money)
     return flask.jsonify(Message="Success adding "+str(money))
 
 def update_data_money(money):
     users.update({
-        "_id": current_user.username
+        # "_id": current_user.username
+        "_id": USER_LOGIN
     }, {
         '$set': {
             "money": money
@@ -229,7 +249,7 @@ def update_data_money(money):
     }, upsert=False)
 
 @app.route('/share/<flag>/<oid>')
-@login_required
+# @login_required
 def share(flag,oid):
     for grid_out in FS.find({'_id': ObjectId(oid)}):
         data = grid_out
@@ -240,13 +260,15 @@ def share(flag,oid):
 #masih ngebug kalo ubah flag ke NO
 
 @app.route('/files')
-@login_required
+# @login_required
 def list_gridfs_files():
-    if current_user.is_authenticated():
+    # if current_user.is_authenticated():
+    if 1:
         data_user_filename = []
         data_user_obj = []
         data_sharing = []
-        for grid_out in FS.find({"user": current_user.username}):
+        # for grid_out in FS.find({"user": current_user.username}):
+        for grid_out in FS.find({"user": USER_LOGIN}):
             data = grid_out
             print data.filename
             data_user_filename.append(str(data.filename))
@@ -259,11 +281,12 @@ def list_gridfs_files():
         print Object.object_name
         print Object.share
         # return flask.jsonify(Message=Object)
-        return flask.jsonify(current_user=current_user.username,Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
+        # return flask.jsonify(current_user=current_user.username,Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
+        return flask.jsonify(current_user=USER_LOGIN,Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
 
 
 @app.route('/files/<oid>')
-@login_required
+# @login_required
 def serve_gridfs_file(oid):
     try:
         file_object = FS.get(ObjectId(oid))
@@ -274,7 +297,7 @@ def serve_gridfs_file(oid):
         abort(404)
 
 @app.route('/AllFiles')
-@login_required
+# @login_required
 def list_all_gridfs_files():
     data_user_filename = []
     data_user_obj = []
@@ -295,7 +318,7 @@ def list_all_gridfs_files():
 
 
 @app.route('/delete/<oid>')
-@login_required
+# @login_required
 def delete(oid):
     FS.delete(ObjectId(oid))
     return flask.jsonify(Message="Success Deleted")
@@ -303,7 +326,8 @@ def delete(oid):
 
 @lm.user_loader
 def load_user(username):
-    u = app.config['USERS_COLLECTION'].find_one({"_id": username})
+    # u = app.config['USERS_COLLECTION'].find_one({"_id": username})
+    u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
     if not u:
         return None
     return User(u['_id'])
