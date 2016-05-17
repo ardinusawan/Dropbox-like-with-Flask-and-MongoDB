@@ -32,10 +32,10 @@ USER_LOGIN = []
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'exe', 'deb', 'doc', 'xls', 'ppt', 'pps', 'odt', 'ods', 'odp', 'docx'])
 
-DB = MongoClient(["localhost:27017"]).gridfs_server
+DB = MongoClient(["159.203.39.8:27017"]).gridfs_server
 FS = GridFS(DB)
 
-users = MongoClient(["localhost:27017"])["gridfs_server"]["users"]
+users = MongoClient(["159.203.39.8:27017"])["gridfs_server"]["users"]
 
 
 def allowed_file(filename):
