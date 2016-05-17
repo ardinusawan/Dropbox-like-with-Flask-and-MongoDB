@@ -30,7 +30,7 @@
       <div id="wrapper">
         <div id="login" class=" form">
           <section class="login_content">
-            <form name ="userinput" action="login_post" method="post">
+            <form role="form" action= "<?php  echo site_url('C_login/login_post');?>" method="post">
               <h1>Login Form</h1>
               <div>
                 <input type="text" class="form-control" placeholder="Username" name="username_post" required="" />
@@ -40,7 +40,7 @@
               </div>
               <div style="float: right; ">
                 <!-- <a class="btn btn-default submit">Log in</a> -->
-                <input type="submit" value="Log in" ></input> 
+                  <input type="submit" name="submit" value="Login" class="btn btn-danger pull-right">
               </div>
               <div class="clearfix"></div>
               <div id="separat" class="separator">
@@ -51,7 +51,6 @@
                 <br />
                 <div>
                   <h1> Sarang Sharing <i class="fa fa-share-alt" style="font-size: 26px;"></i></h1>
-                  <h2><?php echo $data['Message']; ?></h2>
                   <p>©2016 All Rights Reserved. | Cloud Computing Final Project</p>
                 </div>
               </div>

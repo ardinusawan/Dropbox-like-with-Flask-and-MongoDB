@@ -34,30 +34,38 @@
                           <th>Action</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      
+                      <?php 
+                      
+                      foreach ($files['Message'] as $key => $value) {
+                        
+                        foreach ($value as $anotherkey => $val  ) {
+                          $a = $anotherkey;
+                         }
+                      }
+                      ?>
+                      
+                      <?php for ($x=0;$x<=$a;$x++){ ?>
+                        <tbody>
+                     
                         <tr>
-                          <td>#</td>
+                          <td><?php echo $x+1; ?></td>
                           <td>
-                            <a href="<?php echo base_url('assets'); ?>/gentelella/production/images/img.jpg">Fileapa.jpg</a>
+                            <a href="<?php echo base_url('assets'); ?>/gentelella/production/images/img.jpg"><?php print_r($files['Message']['filename'][$x]); ?></a>
                           </td>
                           <td>
-                            <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> View </a>
-                            <a href="#" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Share </a>
-                            <a href="#" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete </a>
+                            <a href="<?php echo site_url('C_main/view/'.$files['Message']['object_name'][$x]); ?>" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> View </a>
+                            <!-- <a href="http://localhost:8888/files/<?php echo $files['Message']['object_name'][$x]; ?>" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> View </a> -->
+                            <a href="<?php echo site_url('C_main/set_flag_share/'.$files['Message']['object_name'][$x]); ?>" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Share </a>
+                            <a href="<?php echo site_url('C_main/delete/'.$files['Message']['object_name'][$x]); ?>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete </a>
                           </td>
                         </tr>
                         <tr>
-                          <td>#</td>
-                          <td>
-                            <a href="<?php echo base_url('assets'); ?>/gentelella/production/images/img.jpg">Fileapa.jpg</a>
-                          </td>
-                          <td>
-                            <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> View </a>
-                            <a href="#" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Share </a>
-                            <a href="#" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete </a>
-                          </td>
-                        </tr>
                       </tbody>
+                      <?php }
+                      ?>
+                      
+
                     </table>
                     </div>
                   </div>

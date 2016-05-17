@@ -248,29 +248,37 @@ def update_data_money(money):
         }
     }, upsert=False)
 
-@app.route('/share/<flag>/<oid>')
+
+@app.route('/share/<oid>')
 # @login_required
-def share(flag,oid):
-    for grid_out in FS.find({'_id': ObjectId(oid)}):
-        data = grid_out
-        FS.put(FS.get(ObjectId(oid)), share=flag, contentType=data.content_type, filename=data.filename,
-               user=current_user.username)
-        FS.delete(ObjectId(oid))
-    return flask.jsonify(Message="Success edit share flag to "+flag)
+def share(oid):
+    FS.put(FS.get(ObjectId(oid)),share="Yes",user=USER_LOGIN,filename=FS.get(ObjectId(oid)).filename,contentType=FS.get(ObjectId(oid)).content_type)
+    FS.delete(ObjectId(oid))
+    # for grid_out in FS.find({'_id': ObjectId(oid)}):
+    #     data = grid_out
+    #     FS.put(FS.get(ObjectId(oid)), share="Yes", contentType=data.content_type, filename=data.filename, user=current_user.username)
+    #     FS.delete(ObjectId(oid))
+    return flask.jsonify(Message="Success edit share",status=1)
 #masih ngebug kalo ubah flag ke NO
 
-@app.route('/files')
+@app.route('/delete/<oid>')
+# @login_required
+def delete(oid):
+    FS.delete(ObjectId(oid))
+    return flask.jsonify(Message="Success Deleted",flag=1)
+
+@app.route('/files', methods=['GET'])
 # @login_required
 def list_gridfs_files():
     # if current_user.is_authenticated():
-    if 1:
+    if USER_LOGIN:
         data_user_filename = []
         data_user_obj = []
         data_sharing = []
         # for grid_out in FS.find({"user": current_user.username}):
         for grid_out in FS.find({"user": USER_LOGIN}):
             data = grid_out
-            print data.filename
+
             data_user_filename.append(str(data.filename))
             data_user_obj.append(str(data._id))
             data_sharing.append(str(data.share))
@@ -282,7 +290,7 @@ def list_gridfs_files():
         print Object.share
         # return flask.jsonify(Message=Object)
         # return flask.jsonify(current_user=current_user.username,Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
-        return flask.jsonify(current_user=USER_LOGIN,Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
+        return json_response(current_user=USER_LOGIN,Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
 
 
 @app.route('/files/<oid>')
@@ -317,11 +325,7 @@ def list_all_gridfs_files():
     return flask.jsonify(Message={"filename":Object.filename,"object_name":Object.object_name,"share_flag":Object.share})
 
 
-@app.route('/delete/<oid>')
-# @login_required
-def delete(oid):
-    FS.delete(ObjectId(oid))
-    return flask.jsonify(Message="Success Deleted")
+
 
 
 @lm.user_loader

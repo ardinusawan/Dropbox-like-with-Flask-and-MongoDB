@@ -12,7 +12,7 @@ class C_login extends CI_Controller
 	public function index()
 	{
 		//get
-		$data = json_decode(file_get_contents('http://10.151.36.31:8888/'),true);
+		$data = json_decode(file_get_contents('http://localhost:8888/'),true);
 		$this->load->view('login',array('data' => $data));
 	}
 
@@ -24,7 +24,7 @@ class C_login extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://10.151.36.31:8888/login",
+		  CURLOPT_URL => "http://localhost:8888/login",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -41,27 +41,16 @@ class C_login extends CI_Controller
 
 		$response = curl_exec($curl);
 		$err = curl_error($curl);
-		$data = json_decode($response,true);
-		
-		var_dump($data);
-		// var_dump($a);
-		// echo $data['Message'];
 		curl_close($curl);
 		
 		
-		if ($err) 
-		{
-		  echo "cURL Error #:" . $err;
-		} 
-		else if ($data['Message']=='True')
-		{
-			echo "Yay";
-			redirect('C_main');
-		}		
-		else
-		{
-			echo "salah";
-			// redirect('C_login');
+		if ($err) {
+  		echo "cURL Error #:" . $err;
+		} else {
+			// $data = json_decode($response,true);
+			redirect('C_main/index');
+			// var_dump($data);
+  		// echo $response;
 		}
 		// //Post
 		// $url = 'http://10.151.36.31:8888/login';

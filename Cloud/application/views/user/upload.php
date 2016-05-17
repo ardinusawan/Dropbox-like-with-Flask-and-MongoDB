@@ -26,13 +26,13 @@
                     <div class="clearfix"></div>
                     <div class="x_content">
                     <br />
-                    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+                    <form action= "<?php  echo site_url('C_main/upload_function');?>" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
 
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">File  <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="file" id="file" required="required" class="form-control col-md-7 col-xs-12">
+                          <input name="fileUpload" type="file" id="file" required="required" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
                       <div class="form-group">
