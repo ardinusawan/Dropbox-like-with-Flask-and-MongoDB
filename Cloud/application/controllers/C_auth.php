@@ -5,6 +5,7 @@ class C_auth extends CI_Controller {
 
 	public function index()
 	{
+	
 		$this->load->view('login');
 	}
 
@@ -12,4 +13,6 @@ class C_auth extends CI_Controller {
 	{
 		$this->load->view('daftar');
 	}
+
+
 }
