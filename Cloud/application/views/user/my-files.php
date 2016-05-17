@@ -154,39 +154,6 @@
                 </div>
               </div>
             </div>
-
-            <div class="row">
-              <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Shared Files</h2>
-                    <div class="clearfix"></div>
-                    <div class="x_content">
-                      <br />
-                      <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th style="width: 70%">File name</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <a href="<?php echo base_url('assets'); ?>/gentelella/production/images/img.jpg">Fileapa.jpg</a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <a href="<?php echo base_url('assets'); ?>/gentelella/production/images/img.jpg">Fileapa.jpg</a>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         <!-- /page content -->

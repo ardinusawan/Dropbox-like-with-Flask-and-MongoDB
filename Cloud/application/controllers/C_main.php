@@ -30,4 +30,19 @@ class C_main extends CI_Controller
 		$this->load->view('user/my-files');		
 	}
 
+	public function shared_files()
+	{
+		$this->load->view('user/sharing-files');
+	}
+
+	public function refill()
+	{
+		$this->load->view('user/refill');
+	}
+
+	public function setting()
+	{
+		$this->load->view('user/setting');
+	}
+
 }

@@ -47,8 +47,8 @@
               <div class="menu_section">
                 <h3>-</h3>
                 <ul class="nav side-menu">
-                  <li class="current-page"><a><i class="fa fa-home"></i> Home </a></li>
-                  <li><a href=""><i class="fa fa-folder"></i> My Files </a></li>
+                  <li><a href="<?php echo site_url('C_main'); ?>"><i class="fa fa-home"></i> Home </a></li>
+                  <li><a href="<?php echo site_url('C_main/my_files'); ?>"><i class="fa fa-folder"></i> My Files </a></li>
                   <li><a><i class="fa fa-upload"></i> Upload Files </a></li>
                   <li><a><i class="fa fa-share-alt"></i> Sharing Files </a></li>
                   <li><a><i class="fa fa-refresh"></i> Refill </a></li>
@@ -90,7 +90,7 @@
 
         <!-- page content -->
         <div class="right_col" role="main">
-          <div class="">
+          <div class="" style="min-height: 620px;">
             <div class="page-title">
               <div class="title_left">
                 <h3><i class="fa fa-cloud"></i></h3>
@@ -108,28 +108,75 @@
               </div>
             </div>
             <div class="clearfix"></div>
-
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel" style="height:500px;">
+                <div class="row top_tiles">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
                   <div class="x_title">
-                    <h2>Plain Page</h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Settings 1</a>
-                          </li>
-                          <li><a href="#">Settings 2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
-                    </ul>
+                    <h2>Tambah Saldo Anda</h2>
                     <div class="clearfix"></div>
+                  </div>
+
+                  <div class="x_content">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <!-- price element -->
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>1 MB</strong></h1>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>5 MB</strong></h1>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>10 MB</strong></h1>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>15 MB</strong></h1>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- price element -->
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

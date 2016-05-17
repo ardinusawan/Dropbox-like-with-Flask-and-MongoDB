@@ -47,8 +47,8 @@
               <div class="menu_section">
                 <h3>-</h3>
                 <ul class="nav side-menu">
-                  <li class="current-page"><a><i class="fa fa-home"></i> Home </a></li>
-                  <li><a href=""><i class="fa fa-folder"></i> My Files </a></li>
+                  <li><a><i class="fa fa-home"></i> Home </a></li>
+                  <li class="current-page"><a href=""><i class="fa fa-folder"></i> My Files </a></li>
                   <li><a><i class="fa fa-upload"></i> Upload Files </a></li>
                   <li><a><i class="fa fa-share-alt"></i> Sharing Files </a></li>
                   <li><a><i class="fa fa-refresh"></i> Refill </a></li>
@@ -90,10 +90,10 @@
 
         <!-- page content -->
         <div class="right_col" role="main">
-          <div class="">
+          <div class="" style="min-height: 620px;">
             <div class="page-title">
               <div class="title_left">
-                <h3><i class="fa fa-cloud"></i></h3>
+                <h3><i class="fa fa-cloud"></i> Refill</h3>
               </div>
 
               <div class="title_right">
@@ -108,28 +108,105 @@
               </div>
             </div>
             <div class="clearfix"></div>
-
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel" style="height:500px;">
+                <div class="row top_tiles">
+                  <div class="animated flipInY col-lg-5 col-md-5 col-sm-4 col-xs-12">
+                    <div class="tile-stats">
+                      <div class="icon"><i class="fa fa-database"></i>
+                      </div>
+                      <div class="count">0.1827951 <span>MB</span></div>
+
+                      <h3>Data Usage</h3>
+                      <p>Banyaknya space yang telah Anda digunakan</p>
+                    </div>
+                  </div>
+                  <div class="animated flipInY col-lg-5 col-md-5 col-sm-4 col-xs-12">
+                    <div class="tile-stats">
+                      <div class="icon"><i class="fa fa-dollar"></i>
+                      </div>
+                      <div class="count"><span>Rp </span>179000<span>,00</span></div>
+                      <h3>User's Saldo</h3>
+                      <p>Jumlah uang yang Anda miliki</p>
+                    </div>
+                  </div>
+                  <div class="animated flipInY col-lg-2 col-md-2 col-sm-4 col-xs-12">
+                    <div class="tile-stats">
+                      <div class="count">3.0<span> MB</span></div>
+                      <h3>Data Limit</h3>
+                      <p>Batasan Data</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
                   <div class="x_title">
-                    <h2>Plain Page</h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Settings 1</a>
-                          </li>
-                          <li><a href="#">Settings 2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
-                    </ul>
+                    <h2>Tambah Data Limit</h2>
                     <div class="clearfix"></div>
+                  </div>
+
+                  <div class="x_content">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <!-- price element -->
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>1 MB</strong></h1>
+                              <h2>Rp 10.000,00</h2>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>5 MB</strong></h1>
+                              <h2>Rp 50.000,00</h2>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>10 MB</strong></h1>
+                              <h2>Rp 100.000,00</h2>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <div class="pricing">
+                            <div class="title">
+                              <h1><strong>15 MB</strong></h1>
+                              <h2>Rp 150.000,00</h2>
+                            </div>
+                            <div class="x_content">
+                              <div class="pricing_footer">
+                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- price element -->
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
