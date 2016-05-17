@@ -129,7 +129,7 @@ def upload_file():
 
 
 @app.route('/settings', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def settings():
     if request.method == 'POST':
         if request.form['submit'] == '1 MB = 10K':
@@ -146,11 +146,11 @@ def settings():
             return check(money, limit)
         elif request.form['submit'] == '15 MB = 150K':
             money = find_money_limit()[0] - 150000
-            limit = find_money_limit()[0] + 15000000
+            limit = find_money_limit()[1] + 15000000
             return check(money, limit)
     elif request.method == 'GET':
         # if current_user.is_authenticated():
-        if current_user.is_authenticated():
+        if USER_LOGIN:
             size = count_usage()
             update_usage_user(size)
             # u = app.config['USERS_COLLECTION'].find_one({"_id": current_user.username})
@@ -165,10 +165,11 @@ def settings():
 def count_usage():
     size = 0
     # for grid_out in FS.find({"user": current_user.username}):
-    for grid_out in FS.find({"user": USER_LOGIN}):
+    for grid_out in FS.find({"user": "wawan"}):
         data = grid_out
         size += data.length
-        print size
+        #
+        print "SIZE :", size
     return size
 
 def update_usage_user(size):

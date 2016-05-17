@@ -3,7 +3,7 @@
           <div class="" style="min-height: 620px;">
             <div class="page-title">
               <div class="title_left">
-                <h3><i class="fa fa-cloud"></i></h3>
+                <h3><i class="fa fa-cloud"> </i> REFILL</h3>
               </div>
 
               <div class="title_right">
@@ -39,11 +39,13 @@
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="pricing">
                             <div class="title">
-                              <h1><strong>1 MB</strong></h1>
+                              <h1><strong>100 K</strong></h1>
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                                <form role="form" action= "<?php  echo site_url('C_main/refill_100k');?>" method="post">
+                                  <input type="submit" name="100k" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                </form>
                               </div>
                             </div>
                           </div>
@@ -51,11 +53,13 @@
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="pricing">
                             <div class="title">
-                              <h1><strong>5 MB</strong></h1>
+                              <h1><strong>200 K</strong></h1>
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                                <form role="form" action= "<?php  echo site_url('C_main/refill_200k');?>" method="post">
+                                  <input type="submit" name="200k" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                </form>
                               </div>
                             </div>
                           </div>
@@ -63,11 +67,13 @@
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="pricing">
                             <div class="title">
-                              <h1><strong>10 MB</strong></h1>
+                              <h1><strong>300 K</strong></h1>
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                                <form role="form" action= "<?php  echo site_url('C_main/refill_300k');?>" method="post">
+                                  <input type="submit" name="300k" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                </form>
                               </div>
                             </div>
                           </div>
@@ -75,11 +81,13 @@
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="pricing">
                             <div class="title">
-                              <h1><strong>15 MB</strong></h1>
+                              <h1><strong>400 K</strong></h1>
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                                <form role="form" action= "<?php  echo site_url('C_main/refill_400k');?>" method="post">
+                                  <input type="submit" name="400k" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                </form>
                               </div>
                             </div>
                           </div>

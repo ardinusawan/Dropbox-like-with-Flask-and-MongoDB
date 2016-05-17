@@ -3,7 +3,7 @@
           <div class="" style="min-height: 620px;">
             <div class="page-title">
               <div class="title_left">
-                <h3><i class="fa fa-cloud"></i> Refill</h3>
+                <h3><i class="fa fa-cloud"></i> SETTINGS</h3>
               </div>
 
               <div class="title_right">
@@ -21,11 +21,11 @@
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="row top_tiles">
-                  <div class="animated flipInY col-lg-5 col-md-5 col-sm-4 col-xs-12">
+                  <div class="animated flipInY col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <div class="tile-stats">
                       <div class="icon"><i class="fa fa-database"></i>
                       </div>
-                      <div class="count">0.1827951 <span>MB</span></div>
+                      <div class="count"><?php $MB = $setting['size']; echo $MB; ?><span> MB</span></div>
 
                       <h3>Data Usage</h3>
                       <p>Banyaknya space yang telah Anda digunakan</p>
@@ -35,14 +35,14 @@
                     <div class="tile-stats">
                       <div class="icon"><i class="fa fa-dollar"></i>
                       </div>
-                      <div class="count"><span>Rp </span>179000<span>,00</span></div>
+                      <div class="count"><span>Rp </span><?php echo $setting['money_user']; ?><span>,00</span></div>
                       <h3>User's Saldo</h3>
                       <p>Jumlah uang yang Anda miliki</p>
                     </div>
                   </div>
-                  <div class="animated flipInY col-lg-2 col-md-2 col-sm-4 col-xs-12">
+                  <div class="animated flipInY col-lg-3 col-md-3 col-sm-4 col-xs-12">
                     <div class="tile-stats">
-                      <div class="count">3.0<span> MB</span></div>
+                      <div class="count"><?php echo $setting['limit_user']/1000000; ?><span> MB</span></div>
                       <h3>Data Limit</h3>
                       <p>Batasan Data</p>
                     </div>
@@ -57,7 +57,7 @@
                     <h2>Tambah Data Limit</h2>
                     <div class="clearfix"></div>
                   </div>
-
+            
                   <div class="x_content">
                     <div class="row">
                       <div class="col-md-12">
@@ -70,11 +70,14 @@
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              <form role="form" action= "<?php  echo site_url('C_main/add_limit10k');?>" method="post">
+                              <input type="submit" name="1 MB = 10K" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                </form>
                               </div>
                             </div>
                           </div>
                         </div>
+                    
                         <div class="col-md-3 col-sm-6 col-xs-12">
                           <div class="pricing">
                             <div class="title">
@@ -83,7 +86,10 @@
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              <form role="form" action= "<?php  echo site_url('C_main/add_limit50k');?>" method="post">
+                              <input type="submit" name="5 MB = 50K" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                
+                                </form>
                               </div>
                             </div>
                           </div>
@@ -96,7 +102,11 @@
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                              <form role="form" action= "<?php  echo site_url('C_main/add_limit100k');?>" method="post">
+                              <input type="submit" name="10 MB = 100K" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                
+                                </form>
+                                
                               </div>
                             </div>
                           </div>
@@ -109,11 +119,15 @@
                             </div>
                             <div class="x_content">
                               <div class="pricing_footer">
-                                <a href="" class="btn btn-success btn-block" role="button">Beli <span> Sekarang!</span></a>
+                                <form role="form" action= "<?php  echo site_url('C_main/add_limit150k');?>" method="post">
+                              <input type="submit" name="15 MB = 150K" value="Beli Sekarang!" class="btn btn-success btn-block">
+                                
+                                </form>
                               </div>
                             </div>
                           </div>
                         </div>
+                        </form>
                         <!-- price element -->
                       </div>
                     </div>

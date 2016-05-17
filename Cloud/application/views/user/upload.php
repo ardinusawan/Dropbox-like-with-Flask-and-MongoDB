@@ -27,6 +27,15 @@
                     <div class="x_content">
                     <br />
                     <form action= "<?php  echo site_url('C_main/upload_function');?>" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
+                        <h1>Upload Form</h1>
+                      <div class="col-md-6">
+                        <h3>Nama File</h3>
+                        <input type="text" class="form-control" placeholder="Nama File" name="nama_file" required="" />
+                      </div>
+                      <div class="col-md-6">
+                      <h3>Tipe File</h3>
+                        <input type="ptext" class="form-control" placeholder="Tipe File" name="tipe_file" required="" />
+                      </div>
 
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">File  <span class="required">*</span>

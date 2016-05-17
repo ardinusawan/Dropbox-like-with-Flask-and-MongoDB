@@ -64,44 +64,38 @@ class C_main extends CI_Controller
 
 	public function upload_function()
 	{
-		 $config['upload_path'] = './uploads/';
-        $config['allowed_types'] = 'txt|pdf';
-        $config['max_size']    = '100';
+		$curl = curl_init();
+		$data['nama_file'] = $this->input->post('nama_file');
+		$data['tipe_file'] = $this->input->post('tipe_file');
+		
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/upload/".$data['nama_file'].",".$data['tipe_file']."",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "PUT",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "postman-token: a61cff45-212b-ba5f-198c-f647dfd4ed51"
+		  ),
+		));
 
-        //load upload class library
-        $this->load->library('upload', $config);
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
 
-        if (!$this->upload->do_upload('filename'))
-        {
-            // case - failure
-            $upload_error = array('error' => $this->upload->display_errors());
-            $this->load->view('upload_file_view', $upload_error);
-        }
-        else
-        {
-            // case - success
-            $upload_data = $this->upload->data();
-            $data['success_msg'] = '<div class="alert alert-success text-center">Your file <strong>' . $upload_data['file_name'] . '</strong> was successfully uploaded!</div>';
-            $this->load->view('upload_file_view', $data);
-        }
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  echo $response;
+		}
+
     }
-		// if(isset($_FILES['fileUpload']))
-		//  {
-		//       $errors= array();
-		//       $file_name = $_FILES['fileUpload']['name'];
-		//       $file_size =$_FILES['fileUpload']['size'];
-		//       $file_tmp =$_FILES['fileUpload']['tmp_name'];
-		//       $file_type=$_FILES['fileUpload']['type'];
-		//       $file_ext=strtolower(end(explode('.',$_FILES['fileUpload']['name'])));
-		      
-		//       echo $file_name;
-		//       echo $file_type;
-	 //   	}
-	 //   	else 
-	 //   	{
-	 //   		echo "Salah";
-	 //   	}
-	
+		
 
 	public function my_files()
 	{
@@ -124,14 +118,18 @@ class C_main extends CI_Controller
 
 	public function refill()
 	{
-		$this->load->view('user/header');
+		$data['head'] = json_decode(file_get_contents('http://localhost:8888/main'),true);
+		$this->load->view('user/header',$data['head']);
 		$this->load->view('user/refill');
 	}
 
 	public function setting()
 	{
-		$this->load->view('user/header');
-		$this->load->view('user/setting');
+		$data['head'] = json_decode(file_get_contents('http://localhost:8888/main'),true);
+		$data['setting'] = json_decode(file_get_contents('http://localhost:8888/settings'),true);
+		$this->load->view('user/header',$data['head']);
+		$this->load->view('user/setting', $data);
+		//var_dump($data['setting']);
 	}
 
 	public function view($id){
@@ -156,6 +154,297 @@ class C_main extends CI_Controller
 			redirect('C_main/shared_files','refresh');
 		}
 		var_dump($flag);
+	}
+
+	public function add_limit10K()
+	{
+		
+		//echo "halo";
+		$curl = curl_init();
+
+		$data['value'] = $this->input->post('1 MB = 10K');
+		#echo "halo";
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n1 MB = 10K\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: a684bfa8-5f1a-0964-b9a6-5f7ed1f4fc40"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  redirect('C_main/setting','refresh');
+		}
+
+	}
+
+
+	public function add_limit50K()
+	{
+	
+		//echo "halo";
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n5 MB = 50K\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: a684bfa8-5f1a-0964-b9a6-5f7ed1f4fc40"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  redirect('C_main/setting','refresh');
+		}
+
+	}	
+
+	public function add_limit100K()
+	{
+		
+		//echo "halo";
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n10 MB = 100K\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: a684bfa8-5f1a-0964-b9a6-5f7ed1f4fc40"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  redirect('C_main/setting','refresh');
+		}
+
+	}
+
+	public function add_limit150K()
+	{
+		//echo "halo";
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n15 MB = 150K\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: a684bfa8-5f1a-0964-b9a6-5f7ed1f4fc40"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  redirect('C_main/setting','refresh');
+		}
+
+	}
+
+	public function refill_100k()
+	{
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n100K\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: c926c1b5-be90-edd2-9c02-2520cb087ed8"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) 
+		{
+		  echo "cURL Error #:" . $err;
+		} else 
+		{
+		  // echo $response;
+			redirect('C_main/setting', 'refresh');
+		}
+	}
+
+	public function refill_200k()
+	{
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n200K\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: c926c1b5-be90-edd2-9c02-2520cb087ed8"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) 
+		{
+		  echo "cURL Error #:" . $err;
+		} else 
+		{
+		  // echo $response;
+			redirect('C_main/setting', 'refresh');
+		}
+	}
+
+	public function refill_300k()
+	{
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n300K\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: c926c1b5-be90-edd2-9c02-2520cb087ed8"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) 
+		{
+		  echo "cURL Error #:" . $err;
+		} else 
+		{
+		  // echo $response;
+			redirect('C_main/setting', 'refresh');
+		}
+	}
+
+	public function refill_400k()
+	{
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\n400K\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n-----011000010111000001101001--",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "postman-token: c926c1b5-be90-edd2-9c02-2520cb087ed8"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) 
+		{
+		  echo "cURL Error #:" . $err;
+		} else 
+		{
+		  // echo $response;
+			redirect('C_main/setting', 'refresh');
+		}
 	}
 		
 
