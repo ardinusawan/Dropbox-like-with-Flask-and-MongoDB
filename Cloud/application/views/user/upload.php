@@ -26,7 +26,7 @@
                     <div class="clearfix"></div>
                     <div class="x_content">
                     <br />
-                    <form action= "<?php  echo site_url('C_main/upload_function');?>" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
+                    <form action= "<?php  echo site_url('C_main/upload_function2');?>" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" enctype="multipart/form-data">
                         <h1>Upload Form</h1>
                       <div class="col-md-6">
                         <h3>Nama File</h3>
@@ -41,7 +41,7 @@
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">File  <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input name="fileUpload" type="file" id="file" required="required" class="form-control col-md-7 col-xs-12">
+                          <input name="file" type="file" id="file" required="required" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
                       <div class="form-group">

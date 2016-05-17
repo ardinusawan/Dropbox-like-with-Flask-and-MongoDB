@@ -32,9 +32,10 @@ class C_main extends CI_Controller
 		$this->load->view('user/upload');
 
 		// $curl = curl_init();
-		// $nama = $this->input->post('nama_put');
-		// $type = $this->input->post('type_put');
-
+		$nama = $this->input->post('nama_put');
+		$type = $this->input->post('type_put');
+		echo $nama;
+		echo $type;
 		// curl_setopt_array($curl, array(
 		//   CURLOPT_PORT => "8888",
 		//   CURLOPT_URL => "http://localhost:8888/upload/".$nama.','.$type."",
@@ -94,6 +95,57 @@ class C_main extends CI_Controller
 		  echo $response;
 		}
 
+    }
+
+    public function upload_function2(){
+    	var_dump($_FILES);
+    	// $data['nama_file'] = $this->input->post('nama_file');
+		// $data['tipe_file'] = $this->input->post('tipe_file');
+		// $url = IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."";
+		// $header = array('Content-Type: multipart/form-data');
+		// $fields = array('file' => '@' . $_FILES['file']['tmp_name'][0]);
+		// $token = 'NfxoS9oGjA6MiArPtwg4aR3Cp4ygAbNA2uv6Gg4m';
+		 
+		// $resource = curl_init();
+		// curl_setopt($resource, CURLOPT_URL, $url);
+		// curl_setopt($resource, CURLOPT_HTTPHEADER, $header);
+		// curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+		// curl_setopt($resource, CURLOPT_POST, 1);
+		// curl_setopt($resource, CURLOPT_POSTFIELDS, $fields);
+		// // curl_setopt($resource, CURLOPT_COOKIE, 'apiToken=' . $token);
+		// $result = json_decode(curl_exec($resource));
+		// curl_close($resource);
+//
+		$curl = curl_init();
+		$data['nama_file'] = $this->input->post('nama_file');
+		$data['tipe_file'] = $this->input->post('tipe_file');
+		$fields = array('file' => '@' . $_FILES['file']['tmp_name'][0]);
+		curl_setopt_array($curl, array(
+		  CURLOPT_PORT => "8888",
+		  CURLOPT_URL => IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."",
+		  CURLOPT_POSTFIELDS => $fields,
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "PUT",
+		  CURLOPT_HTTPHEADER => array(
+		    'Content-Type: multipart/form-data'
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  echo $response;
+		  // redirect('C_main/my_files','refresh');
+		}
     }
 		
 
