@@ -45,7 +45,11 @@
                       }
                       ?>
                       
-                      <?php for ($x=0;$x<=$a;$x++){ ?>
+                      <?php 
+                      if(!empty($a))
+                        for ($x=0;$x<=$a;$x++)
+                          
+                        { ?>
                         <tbody>
                      
                         <tr>
