@@ -47,7 +47,7 @@
               <div class="menu_section">
                 <h3>-</h3>
                 <ul class="nav side-menu">
-                  <li class="current-page"><a><i class="fa fa-home"></i> Home </a></li>
+                  <li><a href="<?php echo site_url('C_main'); ?>"><i class="fa fa-home"></i> Home </a></li>
                   <li><a href="<?php echo site_url('C_main/my_files'); ?>"><i class="fa fa-folder"></i> My Files </a></li>
                   <li><a href="<?php echo site_url('C_main/upload'); ?>"><i class="fa fa-upload"></i> Upload Files </a></li>
                   <li><a href="<?php echo site_url('C_main/shared_files'); ?>"><i class="fa fa-share-alt"></i> Sharing Files </a></li>
