@@ -59,7 +59,7 @@ def register():
     if request.method == 'GET':
         return json.dumps({"register":"Hallo this is register page"})
     if request.method == 'POST':
-        collection = MongoClient()["gridfs_server"]["users"]
+        collection = MongoClient(["159.203.39.8:27017"])["gridfs_server"]["users"]
         username_post = request.form['username_post']
         password_post = request.form['password_post']
         user = app.config['USERS_COLLECTION'].find_one({"_id": username_post})
