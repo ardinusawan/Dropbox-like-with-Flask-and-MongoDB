@@ -56,11 +56,12 @@ class C_login extends CI_Controller
 		else if ($data['Message']=='True')
 		{
 			echo "Yay";
-			redirect('C_main', $data);
+			redirect('C_main');
 		}		
 		else
 		{
-			redirect('C_login');
+			echo "salah";
+			// redirect('C_login');
 		}
 		// //Post
 		// $url = 'http://10.151.36.31:8888/login';
@@ -95,10 +96,10 @@ class C_login extends CI_Controller
 	public function logout()
 	{
 		$data = json_decode(file_get_contents('http://10.151.36.31:8888/logout'),true);
-		print_r($data);
+		// print_r($data);
 		if ($data['Message']=="Logout Success")
 		{
-			echo "berhasil";
+			// echo "berhasil";
 			redirect('C_login',array('data' => $data));
 		}
 		else
