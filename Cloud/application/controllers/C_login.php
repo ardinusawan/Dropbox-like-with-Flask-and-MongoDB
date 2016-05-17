@@ -12,7 +12,7 @@ class C_login extends CI_Controller
 	public function index()
 	{
 		//get
-		$data = json_decode(file_get_contents('http://localhost:8888/'),true);
+		$data = json_decode(file_get_contents(IP_Middleware),true);
 		$this->load->view('login',array('data' => $data));
 	}
 
@@ -24,7 +24,7 @@ class C_login extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/login",
+		  CURLOPT_URL => IP_Middleware."/login",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -84,7 +84,7 @@ class C_login extends CI_Controller
 
 	public function logout()
 	{
-		$data = json_decode(file_get_contents('http://10.151.36.31:8888/logout'),true);
+		$data = json_decode(file_get_contents(IP_Middleware.'/logout'),true);
 		// print_r($data);
 		if ($data['Message']=="Logout Success")
 		{

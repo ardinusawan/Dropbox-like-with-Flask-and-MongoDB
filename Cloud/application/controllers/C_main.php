@@ -5,7 +5,7 @@ class C_main extends CI_Controller
 {
 	public function index()
 	{
-		$data = json_decode(file_get_contents('http://localhost:8888/main'),true);
+		$data = json_decode(file_get_contents(IP_Middleware.'/main'),true);
 		// print_r($data);
 		// return;
 		if ($data['status']==1)
@@ -27,7 +27,7 @@ class C_main extends CI_Controller
 	public function upload()
 	{
 
-		$data['head'] = json_decode(file_get_contents('http://localhost:8888/main'),true);
+		$data['head'] = json_decode(file_get_contents(IP_Middleware.'/main'),true);
 		$this->load->view('user/header', $data['head']);
 		$this->load->view('user/upload');
 
@@ -70,7 +70,7 @@ class C_main extends CI_Controller
 		
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/upload/".$data['nama_file'].",".$data['tipe_file']."",
+		  CURLOPT_URL => IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -100,8 +100,8 @@ class C_main extends CI_Controller
 	public function my_files()
 	{
 		// $current_user = json_decode(file_get_contents('http://localhost:8888/main'),true);
-		$data['head'] = json_decode(file_get_contents('http://localhost:8888/main'),true);
-		$data['files'] = json_decode(file_get_contents('http://localhost:8888/files'),true);
+		$data['head'] = json_decode(file_get_contents(IP_Middleware.'/main'),true);
+		$data['files'] = json_decode(file_get_contents(IP_Middleware.'/files'),true);
 
 		// var_dump($data);
 		$this->load->view('user/header',$data['head']);
@@ -110,23 +110,23 @@ class C_main extends CI_Controller
 
 	public function shared_files()
 	{
-		$data['files'] = json_decode(file_get_contents('http://localhost:8888/AllFiles'),true);
-		$data['head'] = json_decode(file_get_contents('http://localhost:8888/main'),true);
+		$data['files'] = json_decode(file_get_contents(IP_Middleware.'/AllFiles'),true);
+		$data['head'] = json_decode(file_get_contents(IP_Middleware.'/main'),true);
 		$this->load->view('user/header',$data['head']);
 		$this->load->view('user/sharing-files',$data);
 	}
 
 	public function refill()
 	{
-		$data['head'] = json_decode(file_get_contents('http://localhost:8888/main'),true);
+		$data['head'] = json_decode(file_get_contents(IP_Middleware.'/main'),true);
 		$this->load->view('user/header',$data['head']);
 		$this->load->view('user/refill');
 	}
 
 	public function setting()
 	{
-		$data['head'] = json_decode(file_get_contents('http://localhost:8888/main'),true);
-		$data['setting'] = json_decode(file_get_contents('http://localhost:8888/settings'),true);
+		$data['head'] = json_decode(file_get_contents(IP_Middleware.'/main'),true);
+		$data['setting'] = json_decode(file_get_contents(IP_Middleware.'/settings'),true);
 		$this->load->view('user/header',$data['head']);
 		$this->load->view('user/setting', $data);
 		//var_dump($data['setting']);
@@ -167,7 +167,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_URL => IP_Middleware."/settings",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -240,7 +240,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_URL => IP_Middleware."/settings",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -275,7 +275,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_URL => IP_Middleware."/settings",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -309,7 +309,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_URL => IP_Middleware."/refill",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -345,7 +345,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_URL => IP_Middleware."/refill",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -381,7 +381,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_URL => IP_Middleware."/refill",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -417,7 +417,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/refill",
+		  CURLOPT_URL => IP_Middleware."/refill",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,

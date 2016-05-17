@@ -12,7 +12,7 @@ class C_register extends CI_Controller
 	public function index()
 	{
 		//get
-		$data = json_decode(file_get_contents('http://10.151.36.31:8888/register'),true);
+		$data = json_decode(file_get_contents(IP_Middleware.'/register'),true);
 		$this->load->view('daftar',array('data' => $data));
 	}
 
@@ -25,7 +25,7 @@ class C_register extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://10.151.36.31:8888/register",
+		  CURLOPT_URL => IP_Middleware."/register",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
