@@ -41,15 +41,26 @@ class C_login extends CI_Controller
 
 		$response = curl_exec($curl);
 		$err = curl_error($curl);
-
+		$data = json_decode($response,true);
+		
+		var_dump($data);
+		// var_dump($a);
+		// echo $data['Message'];
 		curl_close($curl);
-
+		
+		
 		if ($err) 
 		{
 		  echo "cURL Error #:" . $err;
-		} else 
+		} 
+		else if ($data['Message']=='True')
 		{
-		  echo $response;
+			echo "Yay";
+			redirect('C_main', $data);
+		}		
+		else
+		{
+			redirect('C_login');
 		}
 		// //Post
 		// $url = 'http://10.151.36.31:8888/login';
@@ -81,6 +92,18 @@ class C_login extends CI_Controller
 
 	}
 
-
-
+	public function logout()
+	{
+		$data = json_decode(file_get_contents('http://10.151.36.31:8888/logout'),true);
+		print_r($data);
+		if ($data['Message']=="Logout Success")
+		{
+			echo "berhasil";
+			redirect('C_login',array('data' => $data));
+		}
+		else
+		{
+			echo "Gagal";
+		}
+	}
 }
