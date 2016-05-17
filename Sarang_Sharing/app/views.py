@@ -96,9 +96,9 @@ def login():
 
 @app.route('/logout',methods=['GET'])
 def logout():
-    # global USER_LOGIN
+    global USER_LOGIN
     logout_user()
-    # USER_LOGIN=""
+    USER_LOGIN=""
     return flask.jsonify(Message="Logout Success")
 
 @app.route('/upload/<file_name>,<file_type>', methods=['PUT'])

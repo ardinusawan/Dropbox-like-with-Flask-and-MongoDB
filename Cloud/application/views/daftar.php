@@ -26,7 +26,7 @@
       <div id="wrapper">
         <div id="login" class=" form">
           <section class="login_content">
-            <form name ="userinput" action="C_register/daftar_post" method="post">
+            <form role="form" action="<?php  echo site_url('C_register/daftar_post');?>" method="post">
               <h1>Pendaftaran</h1>
               <div>
                 <input type="text" class="form-control" placeholder="Username" name="username_post" required="" />

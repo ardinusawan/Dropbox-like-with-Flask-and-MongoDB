@@ -51,8 +51,8 @@ class C_register extends CI_Controller
 		} 
 		else 
 		{
-		  echo $response;
-		  $this->load->view('user/main');
+		  // echo $response;
+			redirect('C_login');
 		}
 	}
 }
