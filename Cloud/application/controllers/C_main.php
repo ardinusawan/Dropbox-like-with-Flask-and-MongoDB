@@ -98,7 +98,8 @@ class C_main extends CI_Controller
     }
 
     public function upload_function2(){
-    	var_dump($_FILES);
+    	// var_dump($_FILES);
+    	// var_dump($_SERVER['DOCUMENT_ROOT']);
     	// $data['nama_file'] = $this->input->post('nama_file');
 		// $data['tipe_file'] = $this->input->post('tipe_file');
 		// $url = IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."";
@@ -117,9 +118,12 @@ class C_main extends CI_Controller
 		// curl_close($resource);
 //
 		$curl = curl_init();
+		move_uploaded_file($_FILES['file']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/SS/Cloud/uploads/'. $_FILES['file']['name']);
 		$data['nama_file'] = $this->input->post('nama_file');
 		$data['tipe_file'] = $this->input->post('tipe_file');
-		$fields = array('file' => '@' . $_FILES['file']['tmp_name'][0]);
+		$filePath = realpath($_FILES["file"]["name"]);
+		// $fields = array('file' => '@' . $_FILES['file']['tmp_name'][0]);
+		$fields = array('file' => '@'.$filePath);
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
 		  CURLOPT_URL => IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."",
@@ -131,7 +135,9 @@ class C_main extends CI_Controller
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "PUT",
 		  CURLOPT_HTTPHEADER => array(
-		    'Content-Type: multipart/form-data'
+		  	"cache-control: no-cache",
+		    'Content-Type: multipart/form-data',
+		    "Content-Length: ".filesize($filePath).''
 		  ),
 		));
 
