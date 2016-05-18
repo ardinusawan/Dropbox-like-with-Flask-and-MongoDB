@@ -191,13 +191,13 @@ class C_main extends CI_Controller
 	}
 
 	public function view($id){
-		$link['gambar']  = "http://localhost:8888/files/".$id;
+		$link['gambar']  = IP_Middleware."/files/".$id;
 		// var_dump($link);
 		$this->load->view('user/view-img',$link);
 	}
 
 	public function delete($id){
-		$link['delete']  = "http://localhost:8888/delete/".$id;
+		$link['delete']  = IP_Middleware."/delete/".$id;
 		$flag = json_decode(file_get_contents($link['delete']),true);
 		if($flag['flag']==1){
 			redirect('C_main/my_files','refresh');
@@ -206,7 +206,7 @@ class C_main extends CI_Controller
 	}
 
 	public function set_flag_share($id){
-		$link['flag']  = "http://localhost:8888/share/".$id;
+		$link['flag']  = IP_Middleware."/share/".$id;
 		$flag = json_decode(file_get_contents($link['flag']),true);
 		if($flag['status']==1){
 			redirect('C_main/shared_files','refresh');
@@ -262,7 +262,7 @@ class C_main extends CI_Controller
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => "http://localhost:8888/settings",
+		  CURLOPT_URL => IP_Middleware."/settings",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
