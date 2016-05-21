@@ -32,10 +32,10 @@ USER_LOGIN = []
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'exe', 'deb', 'doc', 'xls', 'ppt', 'pps', 'odt', 'ods', 'odp', 'docx'])
 
-DB = MongoClient(["159.203.39.8:27017"]).gridfs_server
+DB = MongoClient(["localhost:27017"]).gridfs_server
 FS = GridFS(DB)
 
-users = MongoClient(["159.203.39.8:27017"])["gridfs_server"]["users"]
+users = MongoClient(["localhost:27017"])["gridfs_server"]["users"]
 
 
 def allowed_file(filename):
@@ -59,7 +59,6 @@ def register():
     if request.method == 'GET':
         return json.dumps({"register":"Hallo this is register page"})
     if request.method == 'POST':
-        collection = MongoClient(["159.203.39.8:27017"])["gridfs_server"]["users"]
         username_post = request.form['username_post']
         password_post = request.form['password_post']
         user = app.config['USERS_COLLECTION'].find_one({"_id": username_post})
@@ -67,7 +66,7 @@ def register():
             user = username_post
             password = password_post
             pass_hash = generate_password_hash(password, method='pbkdf2:sha256')
-            collection.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
+            users.insert({"_id": user, "password": pass_hash, "usage": 0, "limit": 3000000, "money": 0})
             return flask.jsonify(Message='data inserted')
         return flask.jsonify(Message="Maaf, data telah ada")
 
@@ -104,7 +103,7 @@ def logout():
 @app.route('/upload/<file_name>,<file_type>', methods=['PUT'])
 def upload(file_name,file_type):
     # with FS.new_file(filename=file_name+"."+file_type, content_type=file_type ,user=current_user.username, share="No") as fp:
-    with FS.new_file(filename=file_name+"."+file_type, content_type=file_type ,user=USER_LOGIN, share="No") as fp:
+    with FS.new_file(filename=file_name, content_type=file_type ,user=USER_LOGIN, share="No") as fp:
         fp.write(request.data)
         file_id = fp._id
     if FS.find_one(file_id) is not None:
@@ -165,7 +164,7 @@ def settings():
 def count_usage():
     size = 0
     # for grid_out in FS.find({"user": current_user.username}):
-    for grid_out in FS.find({"user": "wawan"}):
+    for grid_out in FS.find({"user": USER_LOGIN}):
         data = grid_out
         size += data.length
         #
@@ -196,7 +195,7 @@ def check(money, limit):
     u = app.config['USERS_COLLECTION'].find_one({"_id": USER_LOGIN})
     if money < 0:
         # return refill_money()
-        return flask.jsonify(Message="Uang anda tidak cukup saatnya membeli saldo pada page refill")
+        return flask.jsonify(Message="Failed")
     else:
         update_data_limit(money, limit)
         return flask.jsonify(Message="Success")

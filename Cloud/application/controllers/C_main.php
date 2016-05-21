@@ -3,6 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class C_main extends CI_Controller 
 {
+
+
+
+	function __construct(){
+		parent::__construct();
+		$this->load->helper(array('form', 'url'));
+	}
+
 	public function index()
 	{
 		$data = json_decode(file_get_contents(IP_Middleware.'/main'),true);
@@ -31,128 +39,72 @@ class C_main extends CI_Controller
 		$this->load->view('user/header', $data['head']);
 		$this->load->view('user/upload');
 
-		// $curl = curl_init();
-		$nama = $this->input->post('nama_put');
-		$type = $this->input->post('type_put');
-		echo $nama;
-		echo $type;
-		// curl_setopt_array($curl, array(
-		//   CURLOPT_PORT => "8888",
-		//   CURLOPT_URL => "http://localhost:8888/upload/".$nama.','.$type."",
-		//   CURLOPT_RETURNTRANSFER => true,
-		//   CURLOPT_ENCODING => "",
-		//   CURLOPT_MAXREDIRS => 10,
-		//   CURLOPT_TIMEOUT => 30,
-		//   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		//   CURLOPT_CUSTOMREQUEST => "PUT",
-		//   CURLOPT_HTTPHEADER => array(
-		//     "cache-control: no-cache",
-		//     "postman-token: e12b8a7d-eee6-be17-619c-386c0c69d4dc"
-		//   ),
-		// ));
-
-		// $response = curl_exec($curl);
-		// $err = curl_error($curl);
-
-		// curl_close($curl);
-
-		// if ($err) {
-		//   echo "cURL Error #:" . $err;
-		// } else {
-		//   echo $response;
-		// }	
 	}
 
-	public function upload_function()
-	{
-		$curl = curl_init();
-		$data['nama_file'] = $this->input->post('nama_file');
-		$data['tipe_file'] = $this->input->post('tipe_file');
-		
-		curl_setopt_array($curl, array(
-		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "PUT",
-		  CURLOPT_HTTPHEADER => array(
-		    "cache-control: no-cache",
-		    "postman-token: a61cff45-212b-ba5f-198c-f647dfd4ed51"
-		  ),
-		));
+    public function upload_function3(){
+		$config['upload_path'] = '/opt/lampp/htdocs/Cloud/assets/uploads/';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size']	= '1000';
+		$config['max_width']  = '1024';
+		$config['max_height']  = '768';
 
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
+		$this->load->library('upload', $config);
 
-		curl_close($curl);
+		if ( ! $this->upload->do_upload()){
+			$error = array('error' => $this->upload->display_errors());
 
-		if ($err) {
-		  echo "cURL Error #:" . $err;
-		} else {
-		  echo $response;
+			// $this->load->view('form_upload', $error);
+			var_dump($error);
 		}
+		else{
+			$data = array('upload_data' => $this->upload->data());
+
+			// $this->load->view('sukses', $data);
+			// var_dump($data);
+
+			$localFile = $data['upload_data']['full_path']; 
+
+			$fp = fopen($localFile, 'r');
+
+			// Connecting to website.
+			$ch = curl_init();
+
+			// curl_setopt($ch, CURLOPT_USERPWD, "email@email.org:password");
+			curl_setopt($ch, CURLOPT_URL, IP_Middleware."/upload/".$data['upload_data']['file_name'].",".$data['upload_data']['image_type']."");
+			curl_setopt($ch, CURLOPT_UPLOAD, 1);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 86400); // 1 Day Timeout
+			curl_setopt($ch, CURLOPT_INFILE, $fp);
+			curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+			curl_setopt($ch, CURLOPT_BUFFERSIZE, 128);
+			curl_setopt($ch, CURLOPT_INFILESIZE, filesize($localFile));
+			$response = curl_exec($ch);
+			if (curl_errno($ch)) {
+
+			    // $msg = curl_error($ch);
+			}
+			else {
+
+			    $msg = 'File uploaded successfully.';
+			}
+
+			curl_close ($ch);
+
+			// $return = array('msg' => $msg);
+
+			// $pesan = json_encode($response);
+			echo "<script>alert(
+			'Sukses Upload!'
+			);</script>";
+			redirect('C_main/my_files','refresh');
+
+
+		}
+	
 
     }
 
-    public function upload_function2(){
-    	// var_dump($_FILES);
-    	// var_dump($_SERVER['DOCUMENT_ROOT']);
-    	// $data['nama_file'] = $this->input->post('nama_file');
-		// $data['tipe_file'] = $this->input->post('tipe_file');
-		// $url = IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."";
-		// $header = array('Content-Type: multipart/form-data');
-		// $fields = array('file' => '@' . $_FILES['file']['tmp_name'][0]);
-		// $token = 'NfxoS9oGjA6MiArPtwg4aR3Cp4ygAbNA2uv6Gg4m';
-		 
-		// $resource = curl_init();
-		// curl_setopt($resource, CURLOPT_URL, $url);
-		// curl_setopt($resource, CURLOPT_HTTPHEADER, $header);
-		// curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
-		// curl_setopt($resource, CURLOPT_POST, 1);
-		// curl_setopt($resource, CURLOPT_POSTFIELDS, $fields);
-		// // curl_setopt($resource, CURLOPT_COOKIE, 'apiToken=' . $token);
-		// $result = json_decode(curl_exec($resource));
-		// curl_close($resource);
-//
-		$curl = curl_init();
-		move_uploaded_file($_FILES['file']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/SS/Cloud/uploads/'. $_FILES['file']['name']);
-		$data['nama_file'] = $this->input->post('nama_file');
-		$data['tipe_file'] = $this->input->post('tipe_file');
-		$filePath = realpath($_FILES["file"]["name"]);
-		// $fields = array('file' => '@' . $_FILES['file']['tmp_name'][0]);
-		$fields = array('file' => '@'.$filePath);
-		curl_setopt_array($curl, array(
-		  CURLOPT_PORT => "8888",
-		  CURLOPT_URL => IP_Middleware."/upload/".$data['nama_file'].",".$data['tipe_file']."",
-		  CURLOPT_POSTFIELDS => $fields,
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "PUT",
-		  CURLOPT_HTTPHEADER => array(
-		  	"cache-control: no-cache",
-		    'Content-Type: multipart/form-data',
-		    "Content-Length: ".filesize($filePath).''
-		  ),
-		));
 
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
 
-		curl_close($curl);
-
-		if ($err) {
-		  echo "cURL Error #:" . $err;
-		} else {
-		  echo $response;
-		  // redirect('C_main/my_files','refresh');
-		}
-    }
 		
 
 	public function my_files()
@@ -315,12 +267,18 @@ class C_main extends CI_Controller
 
 		$response = curl_exec($curl);
 		$err = curl_error($curl);
+		// var_dump($response);
+		$pesan = json_decode($response);
+		// var_dump($pesan);
 
 		curl_close($curl);
 
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
+			echo "<script>alert(
+			'Saldo Kurang'
+			);</script>";
 		  redirect('C_main/setting','refresh');
 		}
 

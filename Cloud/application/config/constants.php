@@ -1,8 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-define('IP_Middleware', 'http://37.139.7.216:8888');
+// define('IP_Middleware', 'http://37.139.7.216:8888');
 define('JUST_IP_Middleware', 'http://37.139.7.216:8888');
+define('IP_Middleware', 'http://localhost:8888');
 
 /*
 |--------------------------------------------------------------------------

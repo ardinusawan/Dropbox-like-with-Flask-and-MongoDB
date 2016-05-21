@@ -16,6 +16,7 @@
 
     <!-- Custom Theme Style -->
     <link href="<?php echo base_url('assets'); ?>/gentelella/production/css/custom.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
   </head>
 
   <body class="nav-md">

@@ -1,3 +1,4 @@
+
         <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -26,22 +27,14 @@
                     <div class="clearfix"></div>
                     <div class="x_content">
                     <br />
-                    <form action= "<?php  echo site_url('C_main/upload_function2');?>" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" enctype="multipart/form-data">
+                    <?php echo form_open_multipart('C_main/upload_function3');?>
                         <h1>Upload Form</h1>
-                      <div class="col-md-6">
-                        <h3>Nama File</h3>
-                        <input type="text" class="form-control" placeholder="Nama File" name="nama_file" required="" />
-                      </div>
-                      <div class="col-md-6">
-                      <h3>Tipe File</h3>
-                        <input type="ptext" class="form-control" placeholder="Tipe File" name="tipe_file" required="" />
-                      </div>
 
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">File  <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input name="file" type="file" id="file" required="required" class="form-control col-md-7 col-xs-12">
+                          <input name="userfile" type="file" id="file" required="required" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
                       <div class="form-group">
@@ -50,6 +43,18 @@
                         </div>
                       </div>
                     </form>
+
+ <!--  <?php echo form_open_multipart('C_main/upload_function3');?>
+
+  <input type="file" name="userfile" size="20" />
+
+  <br /><br />
+
+  <input type="submit" value="upload" />
+</form> -->
+
+
+
                   </div>
                   </div>
                 </div>
@@ -83,3 +88,4 @@
     <script src="<?php echo base_url('assets'); ?>/gentelella/production/js/custom.js"></script>
   </body>
 </html>
+
